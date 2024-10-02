@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MP1</title>
+        <script src="../src/js/main.js"></script>
+        <link rel="stylesheet" href="../src/css/main.scss">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    </head>
+    <body>
+        <header>
+            <p id="logo">Flower Facts</p>
+            <div class="right-side">
+                <p id="welcome-link" class="section-link"><a href="#welcome-section">Welcome</a></p>
+                <p id="scenic-link" class="section-link"><a href="#scenic-section">Scenic</a></p>
+                <p id="carousel-link" class="section-link"><a href="#carousel-section">Carousel </a></p>
+                <p id="social-link" class="section-link"><a href="#social-section">Social</a></p>
+            </div>
+        </header>
+
+        <div class="section" id="welcome-section">
+            <h1 id="welcome-text">Welcome to Flower Facts</h1>
+            <hr>
+            <p id="site-description">
+                This site was created for CS 409: The Art of Web Programming in accordance with the MP1 requirements (hopefully). To make it more realistic,
+                I am going to model it as a website that provides information about various flowers and plants. 
+                <br><br>
+                Here, you will find details about different species, their care instructions, and what they look like. 
+                Whether you are a seasoned horticulturist or just starting your journey into the world of gardening, I hope this site serves as a valuable resource for you. 
+                <br><br>
+                Explore the beauty and diversity of plants, learn how to nurture them, and discover the joy they can bring into your life.
+            </p>
+        </div>
+        <div class="section" id="scenic-section">
+            <h2 id="scenic-title">Fun Facts About Flowers</h2>
+            <hr>
+            <p id="fun-fact-text">
+                Although most flowers and plants make their own food using photosynthesis, which is the process of turning sunlight and water into sugar, some plants are carnivorous, meaning they trap and eat animals. The most popular example of a carnivorous plant is the Venus Flytrap. 
+                Interestingly, there are several other types of carnivorous plants, such as the Pitcher Plant, which lures insects into its deep, fluid-filled leaves, and the sundew, known for its sticky, glandular hairs that capture prey. 
+                Additionally, flowers have fascinating adaptations to attract pollinators, including vibrant colors, sweet fragrances, and unique shapes. 
+                Some flowers can even change color depending on the pH of the soil! For example, hydrangeas can bloom in shades of blue, pink, or purple based on the acidity of the soil they grow in. 
+                <br><br>
+                These incredible features not only showcase the diversity of the plant kingdom but also play a crucial role in the ecosystem by supporting pollinators and contributing to the balance of nature. 
+                Join us in exploring these amazing plants and their unique characteristics!
+            </p>
+        </div>
+        <div class="section" id="carousel-section">
+            <div class="slider-wrapper">
+                <button id='arrow-left' class="arrow left" onclick="scrollSlider(-1)">&#10094;</button>
+                <div class="slider">
+                    <img id="slide-1" src="../src/assets/jeena-paradies-FnqH9E5C2do-unsplash.jpg" alt="snowdrop">
+                    <img id="slide-2" src="../src/assets/lidia-nikole-R7oHCfHo2ik-unsplash.jpg" alt="dandelions">
+                    <img id="slide-3" src="../src/assets/rusty-watson-XIarQA7Z0IQ-unsplash.jpg" alt="lavendar">
+                </div>
+                <button id='arrow-right' class="arrow right" onclick="scrollSlider(1)">&#10095;</button>
+            </div>
+            <p class="carousel-image-description" id="carousel-image-description">
+                This is a Snowdrop flower, also known as Galanthus. It is native to Europe and the Middle East.
+                They usually bloom in the spring and have three outer petals and three inner petals. 
+                Snowdrops are one of the first flowers to bloom, often emerging from the snow, symbolizing hope and renewal. 
+                These delicate flowers are known for their nodding heads and can be found in woodlands and gardens, providing a beautiful contrast against the lingering winter landscape. 
+                They are also considered a sign that spring is on its way, often bringing joy after the long winter months.
+            </p>
+        </div>
+        <div class="section" id="social-section">
+            <div id="instagram" class="column-item">
+                <button class="modal-btn" data-modal="instagramModal">Instagram</button>
+                <a href="#" class="fa fa-instagram"></a>
+                <div id="instagramModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p>Link to relevant Instagram page.</p>
+                        <a href="https://www.instagram.com/ponyfony_flowers/?hl=en" target="_blank">https://www.instagram.com/ponyfony_flowers/?hl=en</a>
+                    </div>
+                </div>
+            </div>
+            <div id="facebook" class="column-item">
+                <button class="modal-btn" data-modal="facebookModal">Facebook</button>
+                <a href="#" class="fa fa-facebook"></a>
+                <div id="facebookModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p>Link to relevant Facebook page.</p>
+                        <a href="https://www.facebook.com/prettyflowers.sj/" target="_blank">https://www.facebook.com/prettyflowers.sj/</a>
+                    </div>
+                </div>
+            </div>
+            <div id="youtube" class="column-item">
+                <button class="modal-btn" data-modal="article">Article</button>
+                <a href="#" class="fa fa-rss"></a>
+                <div id="article" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p>Link to relevant aricle.</p>
+                        <a href="https://www.nationalgeographic.com/science/article/big-bloom" target="_blank">https://www.nationalgeographic.com/science/article/big-bloom</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p>&copy; 2024 Flower Haven. All rights reserved. | Contact: misyutinvictor@gmail.com</p>
+            <p>Explore the beauty of flowers with us and discover how to bring nature closer to home!</p>
+        </footer>
+    </body>
+</html>
