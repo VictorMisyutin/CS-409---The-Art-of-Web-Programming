@@ -14,9 +14,11 @@
             <p id="logo">Flower Facts</p>
             <div class="right-side">
                 <p id="welcome-link" class="section-link"><a href="#welcome-section">Welcome</a></p>
+                <p id="images-link" class="section-link"><a href="#images-section">Images</a></p>
                 <p id="scenic-link" class="section-link"><a href="#scenic-section">Scenic</a></p>
                 <p id="carousel-link" class="section-link"><a href="#carousel-section">Carousel </a></p>
-                <p id="social-link" class="section-link"><a href="#social-section">Social</a></p>
+                <p id="pollinators-link" class="section-link"><a href="#pollinators-section">Pollinators</a></p>
+                <p id="social-link" class="section-link"><a href="#social-section">Socials</a></p>
             </div>
         </header>
 
@@ -32,6 +34,45 @@
                 <br><br>
                 Explore the beauty and diversity of plants, learn how to nurture them, and discover the joy they can bring into your life.
             </p>
+        </div>
+        <div class="section" id="images-section">
+            <div class="image-item" onclick="openModal('daisy-modal')">
+                <img src="./assets/daisy-5383056_1280.jpg" alt="daisy">
+                <p class="flower-description">Daisy</p>
+            </div>
+            <div class="image-item" onclick="openModal('lotus-modal')">
+                <img src="./assets/lotus-978659_1280.jpg" alt="lotus">
+                <p class="flower-description">Lotus</p>
+            </div>
+            <div class="image-item" onclick="openModal('lily-modal')">
+                <img src="./assets/flower-7092794_1280.jpg" alt="lily">
+                <p class="flower-description">Lily</p>
+            </div>
+        </div>        
+        <div class="modals">
+            <div id="daisy-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal('daisy-modal')">&times;</span>
+                    <img src="./assets/daisy-5383056_1280.jpg" alt="Daisy" class="modal-image">
+                    <p class="modal-description">The daisy is a popular flower known for its white petals and yellow center. It symbolizes innocence and purity.</p>
+                </div>
+            </div>
+        
+            <div id="lotus-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal('lotus-modal')">&times;</span>
+                    <img src="./assets/lotus-978659_1280.jpg" alt="Lotus" class="modal-image">
+                    <p class="modal-description">The lotus is a symbol of purity and enlightenment in many cultures. It blooms beautifully despite growing in muddy waters.</p>
+                </div>
+            </div>
+        
+            <div id="lily-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal('lily-modal')">&times;</span>
+                    <img src="./assets/flower-7092794_1280.jpg" alt="Lily" class="modal-image">
+                    <p class="modal-description">Lilies are known for their large, elegant flowers. They are often used in bouquets and symbolize purity and refined beauty.</p>
+                </div>
+            </div>
         </div>
         <div class="section" id="scenic-section">
             <h2 id="scenic-title">Fun Facts About Flowers</h2>
@@ -64,43 +105,47 @@
                 They are also considered a sign that spring is on its way, often bringing joy after the long winter months.
             </p>
         </div>
+        <div class="section" id="pollinators-section">
+            <h2 id="pollinator-title">Pollinators</h2>
+            <hr>
+            <video class="video" controls>
+                <source src="../src/assets/2616637-hd_1920_1080_30fps.mp4" type="video/mp4">
+                Your browser does not support HTML video.
+            </video>
+            <p id="pollinator-text">
+                The video above shows a butterfly as a pollinator; however, many different animals are pollinators, such as bees, birds, and even bats.
+                Pollinators are essential for the growth of many plants, as they help transfer pollen from one flower to another, leading to fertilization 
+                and the production of fruits and seeds. Without them, much of the food we eat and the beautiful flowers we enjoy wouldn't
+                 exist. Protecting pollinators by creating pollinator-friendly gardens and avoiding harmful pesticides is crucial for maintaining biodiversity 
+                 and a healthy ecosystem.
+            </p>
+        </div>
         <div class="section" id="social-section">
-            <div id="instagram" class="column-item">
-                <button class="modal-btn" data-modal="instagramModal">Instagram</button>
-                <a href="#" class="fa fa-instagram"></a>
-                <div id="instagramModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <p>Link to relevant Instagram page.</p>
-                        <a href="https://www.instagram.com/ponyfony_flowers/?hl=en" target="_blank">https://www.instagram.com/ponyfony_flowers/?hl=en</a>
-                    </div>
+            <h2 id="social-title">Social Media Links</h2>
+            <hr>
+            <div class="media-links">
+                <div class="column">
+                    <a class="social-item" id="instagram-social" href="https://www.instagram.com/floralflourish/?hl=en" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+                        <p>Instagram</p>
+                    </a>
                 </div>
-            </div>
-            <div id="facebook" class="column-item">
-                <button class="modal-btn" data-modal="facebookModal">Facebook</button>
-                <a href="#" class="fa fa-facebook"></a>
-                <div id="facebookModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <p>Link to relevant Facebook page.</p>
-                        <a href="https://www.facebook.com/prettyflowers.sj/" target="_blank">https://www.facebook.com/prettyflowers.sj/</a>
-                    </div>
+                <div class="column">
+                    <a class="social-item" id="facebook-social" href="https://www.facebook.com/prettyflowers.sj/" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z"/></svg>
+                        <p>Facebook</p>
+                    </a>
                 </div>
-            </div>
-            <div id="youtube" class="column-item">
-                <button class="modal-btn" data-modal="article">Article</button>
-                <a href="#" class="fa fa-rss"></a>
-                <div id="article" class="modal">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <p>Link to relevant aricle.</p>
-                        <a href="https://www.nationalgeographic.com/science/article/big-bloom" target="_blank">https://www.nationalgeographic.com/science/article/big-bloom</a>
-                    </div>
+                <div class="column">
+                    <a class="social-item" id="mail-social" href="mailto:fake-email@flowerfacts.com">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48L48 64zM0 176L0 384c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-208L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z"/></svg>
+                        <p>Mail</p>
+                    </a>
                 </div>
             </div>
         </div>
         <footer>
-            <p>&copy; 2024 Flower Haven. All rights reserved. | Contact: misyutinvictor@gmail.com</p>
+            <p>&copy; 2024 Flower Facts. All rights reserved. | Contact: misyutinvictor@gmail.com</p>
             <p>Explore the beauty of flowers with us and discover how to bring nature closer to home!</p>
         </footer>
     </body>

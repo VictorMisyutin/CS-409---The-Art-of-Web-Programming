@@ -1,12 +1,11 @@
-// Variables
 $primary-background: rgb(14, 136, 89);
+$secondary-background: rgb(8, 92, 60);
 $header-background: rgb(15, 59, 53);
 $modal-background: rgba(0, 0, 0, 0.4);
 $modal-content-background: #fefefe;
 $modal-close-color: #aaa;
 $hover-opacity: 0.7;
 
-// Global Styles
 html {
     scroll-behavior: smooth;
 }
@@ -16,7 +15,6 @@ body {
     min-height: 110vh;
 }
 
-// Header Styles
 header {
     background-color: $header-background;
     height: 70px;
@@ -63,7 +61,6 @@ header {
     }
 }
 
-// Section Styles
 .section {
     min-height: 400px;
     padding: 50px 10%;
@@ -119,7 +116,6 @@ header .active-section-link {
     font-weight: bold;
 }
 
-// Social Section Styles
 #social-section {
     background-color: $primary-background;
     display: grid;
@@ -155,51 +151,6 @@ header .active-section-link {
     }
 }
 
-// Modal Styles
-.modal-btn {
-    background: none;
-    border: none;
-    font-size: 25px;
-
-    &:hover {
-        color: #A0A0A0;
-        cursor: pointer;
-    }
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: $modal-background;
-}
-
-.modal-content {
-    background-color: $modal-content-background;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}
-
-.close {
-    color: $modal-close-color;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-
-    &:hover,
-    &:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-}
 
 #carousel-section {
     padding: 0;
@@ -255,13 +206,157 @@ header .active-section-link {
     margin: 0;
     padding: 40px 10%;
     text-align: center;
-    font-size: 25px;
+    font-size: 28px;
+    color: white;
+}
+#images-section {
+    background-color: $primary-background;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    padding-bottom: 100px;
+    background-color: $secondary-background;
+}
+@media screen and (max-width: 1000px) {
+    #images-section{
+        grid-template-columns: 1fr;
+    }
+  }
+.image-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid black;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    background-color: white;
 }
 
+.image-item:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.image-item img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.flower-description {
+    text-align: center;
+    padding: 10px;
+    font-size: 25px;
+    color: #333;
+    font-weight: bold;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: -10%;
+    width: 100%;
+    height: 100%;
+    background-color: $modal-background;
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: $modal-content-background;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    max-height: 500px;
+
+}
+
+.close {
+    color: $modal-close-color;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+        color: black;
+        text-decoration: none;
+    }
+}
+#pollinators-section{
+    background-color: $secondary-background;
+    color: white;
+}
+#pollinator-title{
+    font-size: 40px;
+    text-align: center;
+}
+video{
+    display: block;
+    margin: 40px auto;
+    width: 70%;
+    max-width: 800px;
+}
+#pollinator-text{
+    font-size: 28px;
+    text-align: center;
+}
+#social-section{
+    display: block;
+    color: white;
+}
+#social-title {
+    font-size: 40px;
+    text-align: center;
+}
+.media-links{
+    padding-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;    
+}
+.media-links .column{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.media-links a{
+    color: black;
+    text-decoration: none;
+    font-size: 28px;
+    text-align: center;
+}
+.media-links .column svg{
+    width: 100px;
+}
+.media-links .social-item:hover{
+    filter: invert(20%) sepia(93%) saturate(152%) hue-rotate(87deg) brightness(119%) contrast(119%);
+    cursor: pointer;
+}
+#facebook-social{
+    padding-top: 7px;
+}
 footer {
     color: white;
     text-align: center;
     background-color: black;
     height: 100px;
     padding: 20px;
+    font-size: 20px;
 }
