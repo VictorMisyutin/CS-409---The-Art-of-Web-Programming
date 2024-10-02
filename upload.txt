@@ -4,3 +4,6 @@ git remote add origin git@gitlab.com:misyutinvictor/cs409-mp1.git
 git add .
 git commit -m "Initial commit"
 git push --set-upstream origin main
+
+
+Note: might have to make new ssh key for my desktop
