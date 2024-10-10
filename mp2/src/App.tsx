@@ -4,22 +4,21 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <body>
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <p className="logo">Vic Vic Space Adventures</p>
+        <div className="nav-links">
+          <p><a href="">list</a></p>
+          <p><a href="">gallary</a></p>
+          <p><a href="">more</a></p>
+        </div>
       </header>
-    </div>
+      <div className="hero">
+        <h1>Welcome to Vic Vic Space Adventures</h1>
+        <hr />
+        <h2 className="description">The one stop shop for all of you space needs.</h2>
+      </div>
+    </body>
   );
 }
 
