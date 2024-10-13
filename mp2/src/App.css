@@ -3,12 +3,12 @@ body{
 }
 header{
   height: 75px;
-  background-color: rgb(70, 28, 150);
+  background-color: #0A174E;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 100px;
-  color: white;
+  color: #F5D042;
 }
 .logo{
   font-size: 25px;
@@ -19,20 +19,77 @@ header{
   gap: 20px;
 }
 .nav-links a{
-  color: white;
+  color: #F5D042;
   text-decoration: none;
   font-size: 20px;
 }
 .nav-links a:hover{
-  color: rgb(128, 128, 128);
+  color: #79661c;
   cursor: pointer;
 }
 .hero{
-  padding: 80px 300px;
-  height: 50vh;
-  background-color: rgb(168, 142, 192);
-  text-align: center;
+  font-family: monospace;
+  padding: 80px 200px;
+  height: 30vh;
+  background-color: black;
+  color: white;
+  display: grid;
+  grid-template-columns: 1fr 0.6fr;
 }
-.hero h1{
-  font-size: 45px;
+.left{
+  text-align: left;
+  h1{
+    font-size: 50px;
+  }
+}
+.right{
+  display: flex;
+  justify-content:end;
+  padding-right: 100px;
+  align-items: center;
+  img{
+    width: 250px;  
+  }
+}
+.query-section{
+  min-height: 60vh;
+  background-color: #0A174E;
+  color: #F5D042;
+  padding: 80px 200px;
+  display: flex;
+  justify-content: center;
+}
+.query-input{ 
+  padding: 20px 40px;
+  background-color: #F5D042;
+  color: #0A174E;
+  width: 800px;
+  height: 280px;
+  border-radius: 8px;
+}
+
+/* Form styling */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+  color: #0A174E;  
+}
+
+input[type="text"], select {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+.radio-container label{
+  margin-right: 20px;
+}
+input[type="radio"] {
+  margin-right: 5px;
 }
