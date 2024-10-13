@@ -15,10 +15,9 @@ function App() {
         <div className="left">
           <h1>Vic Vic Space Adventures</h1>
           <h2 className="description">
-            An interactive website that explores the fascinating world of plants and moons. Discover detailed 
-            information about various plant species and celestial moons, and embark on an educational journey through
-            the wonders of nature and space. Whether you're a botany enthusiast or a space explorer, Vic Vic Space Adventures
-            has something for everyone!
+          An interactive website that explores the fascinating world of planets and moons. Discover detailed information 
+          on the unique features and orbits of various celestial bodies. Embark on an educational journey through space 
+          with captivating visuals and engaging content that brings the wonders of the cosmos to life.
           </h2>
         </div>
         <div className="right">
