@@ -86,3 +86,6 @@
     window.openModal = openModal;
     window.closeModal = closeModal;
 })();
+
+// NASA API
+// need to get top X photos or whatever
