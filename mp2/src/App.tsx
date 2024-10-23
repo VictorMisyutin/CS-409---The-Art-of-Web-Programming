@@ -22,7 +22,6 @@ function App() {
   const [showSolarEclipses, setShowSolarEclipses] = useState<boolean>(false);
   const [showLunarEclipses, setShowLunarEclipses] = useState<boolean>(false);
   const [showMeteorShowers, setShowMeteorShowers] = useState<boolean>(false);
-  const [showHalleyComet, setShowHalleyComet] = useState<boolean>(false);
   const [showPlanets, setShowPlanets] = useState<{ [key: string]: boolean }>({
     Mars: false,
     Jupiter: false,
@@ -30,11 +29,6 @@ function App() {
     Earth: false,
   });
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-
-  useEffect(() => {
-    setShowSolarEclipses(true);
-    setActiveFilter('solarEclipse');
-  }, []);
 
   useEffect(() => {
     const fetchRecentPhotos = async () => {
@@ -66,11 +60,6 @@ function App() {
            result.explanation.toLowerCase().includes("meteor shower");
   };
 
-  const isHalleyComet = (result: NasaResponse) => {
-    return result.title.toLowerCase().includes("halley's comet") || 
-           result.explanation.toLowerCase().includes("halley's comet");
-  };
-
   const isPlanet = (result: NasaResponse, planet: string) => {
     return result.title.toLowerCase().includes(planet.toLowerCase()) || 
            result.explanation.toLowerCase().includes(planet.toLowerCase());
@@ -81,8 +70,7 @@ function App() {
       const isEclipse = 
         (showSolarEclipses && isSolarEclipse(result)) || 
         (showLunarEclipses && isLunarEclipse(result)) || 
-        (showMeteorShowers && isMeteorShower(result)) || 
-        (showHalleyComet && isHalleyComet(result));
+        (showMeteorShowers && isMeteorShower(result));
         
       const isPlanetSelected = Object.keys(showPlanets).some(planet => 
         showPlanets[planet] && isPlanet(result, planet)
@@ -96,7 +84,7 @@ function App() {
     setIsLoading(true);
     const API_KEY = '2bJJ8abZ0OMiRMascSH5LGAbfqk3rqzGEQc1Plml';
     const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`;
-  
+
     try {
       const response = await axios.get<NasaResponse[]>(url);
       const sortedResults = response.data.sort((a, b) => {
@@ -115,11 +103,11 @@ function App() {
         }
         return 0;
       });
-  
-      const filteredResults = filterResults(sortedResults);
+
+      const filteredResults = filterResults(sortedResults); // Apply filters after sorting
       const maxResults = maxCount !== 'none' ? parseInt(maxCount, 10) : filteredResults.length;
       setResults(filteredResults.slice(0, maxResults));
-  
+
     } catch (error) {
       console.error('Error fetching data from NASA API', error);
     } finally {
@@ -128,28 +116,35 @@ function App() {
   };
 
   const handleSolarEclipseFilter = () => {
-    setShowSolarEclipses(prev => !prev);
-    setActiveFilter(prev => prev === 'solarEclipse' ? null : 'solarEclipse');
+    setShowSolarEclipses(prev => {
+      const newValue = !prev;
+      setActiveFilter(newValue ? 'solarEclipse' : null);
+      return newValue;
+    });
   };
 
   const handleLunarEclipseFilter = () => {
-    setShowLunarEclipses(prev => !prev);
-    setActiveFilter(prev => prev === 'lunarEclipse' ? null : 'lunarEclipse');
+    setShowLunarEclipses(prev => {
+      const newValue = !prev;
+      setActiveFilter(newValue ? 'lunarEclipse' : null);
+      return newValue;
+    });
   };
 
   const handleMeteorShowerFilter = () => {
-    setShowMeteorShowers(prev => !prev);
-    setActiveFilter(prev => prev === 'meteorShower' ? null : 'meteorShower');
-  };
-
-  const handleHalleyCometFilter = () => {
-    setShowHalleyComet(prev => !prev);
-    setActiveFilter(prev => prev === 'halleyComet' ? null : 'halleyComet');
+    setShowMeteorShowers(prev => {
+      const newValue = !prev;
+      setActiveFilter(newValue ? 'meteorShower' : null);
+      return newValue;
+    });
   };
 
   const handlePlanetFilter = (planet: string) => {
-    setShowPlanets(prev => ({ ...prev, [planet]: !prev[planet] }));
-    setActiveFilter(prev => prev === planet ? null : planet);
+    setShowPlanets(prev => {
+      const newValue = !prev[planet];
+      setActiveFilter(newValue ? planet : null);
+      return { ...prev, [planet]: newValue };
+    });
   };
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -167,17 +162,10 @@ function App() {
     return '';
   };
 
+  // Call handleSearch whenever filter states change
   useEffect(() => {
-    if (
-      showSolarEclipses ||
-      showLunarEclipses ||
-      showMeteorShowers ||
-      showHalleyComet ||
-      Object.values(showPlanets).some(planet => planet)
-    ) {
-      handleSearch();
-    }
-  }, [showSolarEclipses, showLunarEclipses, showMeteorShowers, showHalleyComet, showPlanets]);
+    handleSearch();
+  }, [showSolarEclipses, showLunarEclipses, showMeteorShowers, showPlanets, startDate, endDate, maxCount]);
 
   return (
     <Router>
@@ -185,7 +173,9 @@ function App() {
         <p><Link to='/' className="logo">Vic Vic Space Adventures</Link></p>
         <div className="nav-links">
           <p><Link to="/list">List</Link></p>
-          <p><Link to="/gallery">Gallery</Link></p>
+          <p>
+            <Link to="/gallery">Gallery</Link>
+          </p>
         </div>
       </header>
       <Routes>
@@ -322,9 +312,6 @@ function App() {
                 </div>
                 <div className={`filter ${activeFilter === 'meteorShower' ? 'active' : ''}`} onClick={handleMeteorShowerFilter}>
                   Meteor Shower Only
-                </div>
-                <div className={`filter ${activeFilter === 'halleyComet' ? 'active' : ''}`} onClick={handleHalleyCometFilter}>
-                  Halley’s Comet Only
                 </div>
                 <div className={`filter ${activeFilter === 'Mars' ? 'active' : ''}`} onClick={() => handlePlanetFilter('Mars')}>
                   Mars Only
