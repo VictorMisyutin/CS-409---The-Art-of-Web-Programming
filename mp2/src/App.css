@@ -57,6 +57,8 @@ header {
 
 .left h2 {
   font-size: 21px;
+  padding: 0;
+  text-align: left;
 }
 
 .right {
@@ -164,21 +166,63 @@ select {
   text-decoration: underline;
 }
 
-.filters{
-  margin: 0 auto;
-  border: 2px red solid;
-  display: inline-flex;
-}
-.filter{
-  background-color: #F5D042;
-  color: #0A174E;
-  border: 2px black solid;
-  width: 150px;
-  text-align: center;
-  padding: 10px;
-  font-size: 18px;
+.gallery{
+  
+  .filters{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-bottom: 5vh;
+    
+    button{
+      font-size: 20px;
+      background-color: #F5D042;
+      color: #0A174E;
+      padding: 10px;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    button.active {
+      background-color: #8f7921; /* Adjust to your desired active color */
+    } 
+  }
 }
 
+.gallery-grid{
+  width: 60vw;
+  margin: 0 auto;
+  gap: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+
+  .gallery-item{
+    overflow: hidden;
+    padding: 0;
+    background-color: #F5D042;
+    h3{
+      margin: 0;
+      height: 50px;
+      padding: 10px 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 20px;
+    }
+    img,iframe{
+      margin: 0;
+      padding: 0;
+      min-height:  400px;
+      max-height:  400px;
+      object-fit: fit;
+      background-color: gray;
+    }
+  }
+  .gallery-item:hover{
+    cursor: pointer;
+    transform: scaleX(1.02) scaleY(1.02);
+  }
+}
 
   /* Media Queries for responsive design */
 @media (max-width: 768px) {

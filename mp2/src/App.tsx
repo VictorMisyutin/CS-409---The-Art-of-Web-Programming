@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import PhotoDetail from './PhotoDetail';
@@ -19,11 +19,15 @@ function App() {
   const [order, setOrder] = useState<string>('asc');
   const [maxCount, setMaxCount] = useState<string>('none');
   const [results, setResults] = useState<NasaResponse[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [galleryImages, setGalleryImages] = useState<NasaResponse[]>([]);
+  const [filter, setFilter] = useState<string>(''); // New filter state
+  const [isFiltering, setIsFiltering] = useState<boolean>(false); // New filtering loading state
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);  // Start loading
+    setIsLoading(true);
 
     const API_KEY = '2bJJ8abZ0OMiRMascSH5LGAbfqk3rqzGEQc1Plml';
     const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`;
@@ -52,8 +56,49 @@ function App() {
     } catch (error) {
       console.error('Error fetching data from NASA API', error);
     } finally {
-      setIsLoading(false);  // Stop loading
+      setIsLoading(false);
     }
+  };
+
+  const fetchGalleryImages = async () => {
+    const API_KEY = '2bJJ8abZ0OMiRMascSH5LGAbfqk3rqzGEQc1Plml';
+    const today = new Date();
+    const lastYear = new Date();
+    lastYear.setFullYear(today.getFullYear() - 1);
+    const startDate = lastYear.toISOString().split('T')[0];
+    const endDate = today.toISOString().split('T')[0];
+    const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`;
+
+    try {
+      const response = await axios.get<NasaResponse[]>(url);
+      setGalleryImages(response.data);
+    } catch (error) {
+      console.error('Error fetching gallery images from NASA API', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchGalleryImages();
+  }, []);
+
+  // Filter results based on the selected filter
+  const filteredGalleryImages = galleryImages.filter(image => {
+    // Check if image.url exists before calling endsWith
+    if (filter && image.url) {
+      return image.title.toLowerCase().includes(filter.toLowerCase()) ||
+             image.explanation.toLowerCase().includes(filter.toLowerCase());
+    }
+    return true;
+  });
+
+  const handleFilterChange = (newFilter: string) => {
+    setIsFiltering(true); // Set filtering loading state to true
+    setFilter(newFilter); // Update the filter state
+
+    // Simulate filtering delay (you can remove this if you fetch/filter data directly)
+    setTimeout(() => {
+      setIsFiltering(false); // Reset filtering loading state
+    }, 500); // Adjust the delay as needed
   };
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -78,14 +123,10 @@ function App() {
         <div className="nav-links">
           <p><Link to="/list">List</Link></p>
           <p><Link to="/gallery">Gallery</Link></p>
-          <p><Link to="/">More</Link></p>
         </div>
       </header>
       <Routes>
-        {/* Redirect from "/" to "/list" */}
         <Route path="/" element={<Navigate to="/list" />} />
-
-        {/* List Route */}
         <Route
           path="/list"
           element={
@@ -100,12 +141,21 @@ function App() {
                   </h2>
                 </div>
                 <div className="right">
-                  <img src="clipart4050.png" alt="Space and plant exploration" />
+                  <img src="clipart4050.png" alt="Space and planet exploration" />
                 </div>
               </div>
               <div className="query-section">
                 <div className="query-input">
                   <form onSubmit={handleSearch}>
+                    <label htmlFor="search-string"> Search:</label>
+                    <input
+                      type="text"
+                      id="search-string"
+                      name="search-string"
+                      placeholder="Search by title or description"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                     <label htmlFor="start-date">Start Date:</label>
                     <input
                       type="date"
@@ -198,29 +248,78 @@ function App() {
                           )}
                         </Link>
                       </div>
-
                     ))
                   )}
                 </div>
+
               </div>
             </div>
           }
         />
-
-        {/* Gallery Route */}
         <Route
           path="/gallery"
           element={
             <div className="gallery">
               <div className="filters">
-                <div className='filter'>Today Only</div>
-                <div className='filter'>Solar Eclipse Only</div>
+                <button 
+                  className={filter === 'lunar eclipse' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('lunar eclipse')}
+                >
+                  Lunar Eclipse
+                </button>
+                <button 
+                  className={filter === 'meteor shower' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('meteor shower')}
+                >
+                  Meteor Shower
+                </button>
+                <button 
+                  className={filter === 'mars' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('mars')}
+                >
+                  Mars
+                </button>
+                <button 
+                  className={filter === 'jupiter' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('jupiter')}
+                >
+                  Jupiter
+                </button>
+                <button onClick={() => handleFilterChange('')}>Clear Filters</button>
               </div>
+              {isFiltering ? (
+                <div className="loading-spinner">
+                  <p>Loading filtered results...</p>
+                </div>
+              ) : (
+                <div className="gallery-grid">
+                  {filteredGalleryImages.length > 0 ? (
+                    filteredGalleryImages.map((image, index) => (
+                      <div key={index} className='gallery-item'>
+                        <h3>{image.title}</h3>
+                        {image.url && ( // Check if image.url exists before accessing it
+                          image.url.endsWith('.jpg') || image.url.endsWith('.png') ? (
+                            <img src={image.url} alt={image.title} style={{ width: '100%', height: 'auto' }} />
+                          ) : (
+                            <iframe
+                              width="100%"
+                              height="315"
+                              src={getYouTubeEmbedUrl(image.url)}
+                              title={image.title}
+                              allowFullScreen
+                            ></iframe>
+                          )
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <p>No images found for the selected filters.</p>
+                  )}
+                </div>
+              )}
             </div>
           }
         />
-
-        {/* Photo Detail Route */}
         <Route path="/photo/:id" element={<PhotoDetail results={results} />} />
       </Routes>
     </Router>
