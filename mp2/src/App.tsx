@@ -186,7 +186,6 @@ function App() {
         <div className="nav-links">
           <p><Link to="/list">List</Link></p>
           <p><Link to="/gallery">Gallery</Link></p>
-          <p><Link to="/">More</Link></p>
         </div>
       </header>
       <Routes>
