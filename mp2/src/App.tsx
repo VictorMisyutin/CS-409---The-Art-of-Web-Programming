@@ -1,13 +1,15 @@
 import './App.css';
 import React, { useState } from 'react';
 import axios from 'axios';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+import PhotoDetail from './PhotoDetail';
 
 // Define a type for the API response
 interface NasaResponse {
   title: string;
   url: string;
   explanation: string;
-  date: string; // Add date field
+  date: string;
 }
 
 function App() {
@@ -15,19 +17,19 @@ function App() {
   const [endDate, setEndDate] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('date');
   const [order, setOrder] = useState<string>('asc');
-  const [maxCount, setMaxCount] = useState<string>('none'); // State for max count
+  const [maxCount, setMaxCount] = useState<string>('none');
   const [results, setResults] = useState<NasaResponse[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);  // Start loading
 
-    // Replace with your NASA API key
-    const API_KEY = 'API_KEY';
+    const API_KEY = '2bJJ8abZ0OMiRMascSH5LGAbfqk3rqzGEQc1Plml';
     const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`;
 
     try {
       const response = await axios.get<NasaResponse[]>(url);
-      // Sort the results based on the selected criteria and order
       const sortedResults = response.data.sort((a, b) => {
         if (sortBy === 'date') {
           return order === 'asc'
@@ -42,14 +44,15 @@ function App() {
             ? a.explanation.localeCompare(b.explanation)
             : b.explanation.localeCompare(a.explanation);
         }
-        return 0; // Default case
+        return 0;
       });
 
-      // Handle max count - filter results if a count is selected
       const maxResults = maxCount !== 'none' ? parseInt(maxCount, 10) : sortedResults.length;
-      setResults(sortedResults.slice(0, maxResults)); // Limit results
+      setResults(sortedResults.slice(0, maxResults));
     } catch (error) {
       console.error('Error fetching data from NASA API', error);
+    } finally {
+      setIsLoading(false);  // Stop loading
     }
   };
 
@@ -65,131 +68,162 @@ function App() {
     } catch (error) {
       console.error('Invalid URL:', url, error);
     }
-    return ''; // Return an empty string if not a valid YouTube URL
+    return '';
   };
 
   return (
-    <body>
+    <Router>
       <header className="App-header">
-        <p className="logo">Vic Vic Space Adventures</p>
+        <p><Link to='/' className="logo">Vic Vic Space Adventures</Link></p>
         <div className="nav-links">
-          <p><a href="">list</a></p>
-          <p><a href="">gallery</a></p>
-          <p><a href="">more</a></p>
+          <p><Link to="/list">List</Link></p>
+          <p><Link to="/gallery">Gallery</Link></p>
+          <p><Link to="/">More</Link></p>
         </div>
       </header>
-      <div className="hero">
-        <div className="left">
-          <h1>Vic Vic Space Adventures</h1>
-          <h2 className="description">
-            An interactive website that explores the fascinating world of planets and moons. Discover detailed information 
-            on the unique features and orbits of various celestial bodies. Embark on an educational journey through space 
-            with captivating visuals and engaging content that brings the wonders of the cosmos to life.
-          </h2>
-        </div>
-        <div className="right">
-          <img src="clipart4050.png" alt="Space and plant exploration" />
-        </div>
-      </div>
-      <div className="query-section">
-        <div className="query-input">
-          <form onSubmit={handleSearch}>
-            {/* Start Date Input */}
-            <label htmlFor="start-date">Start Date:</label>
-            <input 
-              type="date" 
-              id="start-date" 
-              name="start-date" 
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              required 
-            /><br />
+      <Routes>
+        {/* Redirect from "/" to "/list" */}
+        <Route path="/" element={<Navigate to="/list" />} />
 
-            {/* End Date Input */}
-            <label htmlFor="end-date">End Date:</label>
-            <input 
-              type="date" 
-              id="end-date" 
-              name="end-date" 
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              required 
-            /><br />
+        {/* List Route */}
+        <Route
+          path="/list"
+          element={
+            <div className='home'>
+              <div className="hero">
+                <div className="left">
+                  <h1>Vic Vic Space Adventures</h1>
+                  <h2 className="description">
+                    An interactive website that explores the fascinating world of planets and moons. Discover detailed information
+                    on the unique features and orbits of various celestial bodies. Embark on an educational journey through space
+                    with captivating visuals and engaging content that brings the wonders of the cosmos to life.
+                  </h2>
+                </div>
+                <div className="right">
+                  <img src="clipart4050.png" alt="Space and plant exploration" />
+                </div>
+              </div>
+              <div className="query-section">
+                <div className="query-input">
+                  <form onSubmit={handleSearch}>
+                    <label htmlFor="start-date">Start Date:</label>
+                    <input
+                      type="date"
+                      id="start-date"
+                      name="start-date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      required
+                    /><br />
 
-            {/* Max Count Dropdown */}
-            <label htmlFor="max-count">Max Count:</label>
-            <select 
-              id="max-count" 
-              value={maxCount}
-              onChange={(e) => setMaxCount(e.target.value)}
-            >
-              <option value="none">None</option>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-            </select><br />
+                    <label htmlFor="end-date">End Date:</label>
+                    <input
+                      type="date"
+                      id="end-date"
+                      name="end-date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      required
+                    /><br />
 
-            {/* Sort By Dropdown */}
-            <label htmlFor="sort-by">Sort By:</label>
-            <select 
-              id="sort-by" 
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="date">Date</option>
-              <option value="title">Title</option>
-              <option value="explanation">Explanation</option>
-            </select><br />
+                    <label htmlFor="max-count">Max Count:</label>
+                    <select
+                      id="max-count"
+                      value={maxCount}
+                      onChange={(e) => setMaxCount(e.target.value)}
+                    >
+                      <option value="none">None</option>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+                      <option value="20">20</option>
+                    </select><br />
 
-            {/* Ascending/Descending Radio Buttons */}
-            <label htmlFor="order">Sort Order:</label>
-            <div className="radio-container">
-              <input 
-                type="radio" 
-                id="ascending" 
-                name="order" 
-                value="asc" 
-                checked={order === 'asc'}
-                onChange={(e) => setOrder(e.target.value)} 
-              />
-              <label htmlFor="ascending">Ascending</label>
-              <input 
-                type="radio" 
-                id="descending" 
-                name="order" 
-                value="desc" 
-                checked={order === 'desc'}
-                onChange={(e) => setOrder(e.target.value)} 
-              />
-              <label htmlFor="descending">Descending</label><br /><br />
+                    <label htmlFor="sort-by">Sort By:</label>
+                    <select
+                      id="sort-by"
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                    >
+                      <option value="date">Date</option>
+                      <option value="title">Title</option>
+                      <option value="explanation">Explanation</option>
+                    </select><br />
+
+                    <label htmlFor="order">Sort Order:</label>
+                    <div className="radio-container">
+                      <input
+                        type="radio"
+                        id="ascending"
+                        name="order"
+                        value="asc"
+                        checked={order === 'asc'}
+                        onChange={(e) => setOrder(e.target.value)}
+                      />
+                      <label htmlFor="ascending">Ascending</label>
+                      <input
+                        type="radio"
+                        id="descending"
+                        name="order"
+                        value="desc"
+                        checked={order === 'desc'}
+                        onChange={(e) => setOrder(e.target.value)}
+                      />
+                      <label htmlFor="descending">Descending</label><br /><br />
+                    </div>
+                    <button type="submit" className='search-button'>Search</button>
+                  </form>
+                </div>
+
+                <div className="query-results">
+                  {isLoading ? (
+                    <div className="loading-spinner">
+                      <p>Loading...</p>
+                    </div>
+                  ) : (
+                    results.length > 0 && results.map((result, index) => (
+                      <div key={index} className='result-cell'>
+                        <Link to={`/photo/${index}`} className="result-link">
+                          <h3 className='result-title'>{result.title} ({result.date})</h3>
+                          {getYouTubeEmbedUrl(result.url) ? (
+                            <iframe
+                              width="100%"
+                              height="315"
+                              src={getYouTubeEmbedUrl(result.url)}
+                              title={result.title}
+                              allowFullScreen
+                            ></iframe>
+                          ) : (
+                            <img src={result.url} alt={result.title} style={{ width: '100%', height: 'auto' }} />
+                          )}
+                        </Link>
+                      </div>
+
+                    ))
+                  )}
+                </div>
+              </div>
             </div>
-            <button type="submit" className='search-button'>Search</button>
-          </form>
-        </div>
-        <div className="query-results">
-          {/* Results will be displayed here */}
-          {results.length > 0 && results.map((result, index) => (
-            <div key={index} className='result-cell'>
-              <h3>{result.title} ({result.date})</h3>
-              {getYouTubeEmbedUrl(result.url) ? (
-                <iframe
-                  width="100%"
-                  height="315"
-                  src={getYouTubeEmbedUrl(result.url)}
-                  title={result.title}
-                  frameBorder="0"
-                  allowFullScreen
-                ></iframe>
-              ) : (
-                <img src={result.url} alt={result.title} style={{ width: '100%', height: 'auto' }} />
-              )}
-              <p>{result.explanation}</p>
+          }
+        />
+
+        {/* Gallery Route */}
+        <Route
+          path="/gallery"
+          element={
+            <div className="gallery">
+              <div className="filters">
+                <div className='filter'>Today Only</div>
+                <div className='filter'>Solar Eclipse Only</div>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </body>
+          }
+        />
+
+        {/* Photo Detail Route */}
+        <Route path="/photo/:id" element={<PhotoDetail results={results} />} />
+      </Routes>
+    </Router>
   );
 }
 
