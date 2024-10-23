@@ -1,98 +1,208 @@
-body{
+body {
   min-height: 105vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
 }
-header{
+
+header {
   height: 75px;
   background-color: #0A174E;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 100px;
+  padding: 0 100px; /* Default padding for desktop */
   color: #F5D042;
 }
-.logo{
-  font-size: 25px;
+
+.logo {
+  font-size: 25px; /* Maintained original size for desktop */
   cursor: pointer;
 }
-.nav-links{
+
+.nav-links {
   display: inline-flex;
   gap: 20px;
 }
-.nav-links a{
+
+.nav-links a {
   color: #F5D042;
   text-decoration: none;
   font-size: 20px;
 }
-.nav-links a:hover{
+
+.nav-links a:hover {
   color: #79661c;
   cursor: pointer;
 }
-.hero{
+
+.hero {
   font-family: monospace;
-  padding: 80px 200px;
-  height: 30vh;
+  padding: 80px 200px; /* Default padding for desktop */
   background-color: black;
   color: white;
   display: grid;
-  grid-template-columns: 1fr 0.7fr;
+  grid-template-columns: 1fr 0.7fr; /* Two columns for larger screens */
 }
-.left{
+
+.left {
   text-align: left;
-  h1{
-    font-size: 50px;
-  }
-  h2{
-    font-size: 21px;
-  }
 }
-.right{
+
+.left h1 {
+  font-size: 50px;
+}
+
+.left h2 {
+  font-size: 21px;
+}
+
+.right {
   display: flex;
-  justify-content:end;
-  padding-right: 100px;
+  justify-content: end;
   align-items: center;
-  img{
-    width: 250px;  
-  }
 }
-.query-section{
-  min-height: 60vh;
+
+.right img {
+  width: 250px; /* Fixed width for larger screens */
+}
+
+.query-section {
   background-color: #0A174E;
   color: #F5D042;
-  padding: 80px 200px;
-  display: flex;
+  padding: 80px 200px; /* Default padding for desktop */
   justify-content: center;
 }
-.query-input{ 
+
+.query-input {
+  margin: 0 auto;
+  display: flex;
   padding: 20px 40px;
   background-color: #F5D042;
   color: #0A174E;
   width: 800px;
-  height: 290px;
   border-radius: 8px;
+  margin-bottom: 7vh;
 }
 
-/* Form styling */
 form {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 label {
   font-size: 1.5rem;
   margin-bottom: 5px;
-  color: #0A174E;  
+  color: #0A174E;
+  
 }
 
-input[type="text"], select {
+input,
+select {
   padding: 10px;
   font-size: 1.4rem;
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 15px;
 }
-.radio-container label{
+
+.radio-container label {
   margin-right: 20px;
 }
-input[type="radio"] {
-  margin-right: 5px;
+
+.search-button{
+  margin: 0 auto;
+  width: 100px;
+  background-color: #0A174E;
+  color: white;
+  padding: 5px 0px;
+  border-radius: 7px;
+}
+.search-button:hover{
+  cursor: pointer;
+  background: #1a3197;
+}
+
+.query-results{
+  width: 50vw;
+  margin: 0 auto;
+  background-color: #F5D042;
+  color: #0A174E;
+}
+
+.result-cell{
+  border-bottom: 2px #F5D042 solid;
+  margin-bottom: 5vh;  
+}
+  /* Media Queries for responsive design */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column; /* Stack header items vertically */
+    align-items: flex-start; /* Align items to the start */
+    height: 36vh;
+    text-align: center;
+    padding: 0;
+  }
+  
+  .logo{
+    text-align: center;
+    margin: 15px auto;
+
+  }
+  
+  .nav-links {
+    margin-top: 0;
+    padding-top: 0;
+    flex-direction: column; /* Stack nav links vertically */
+    text-align: center;
+    width: 100%;
+    gap: 0;
+  }
+  
+  .nav-links p{
+    padding: 10px 0;
+    width: 100%;
+    border-top: 2px #F5D042 solid ;
+  }
+
+  .hero {
+    padding: 40px 20px; /* Less padding for smaller screens */
+    grid-template-columns: 1fr; /* Stack items on smaller screens */
+  }
+
+  .left h1 {
+    font-size: 2rem; /* Smaller font size for smaller screens */
+  }
+
+  .left h2 {
+    font-size: 1rem; /* Smaller font size for smaller screens */
+  }
+
+  .right {
+    justify-content: center; /* Center the image on smaller screens */
+    padding-right: 0; /* Remove extra padding */
+  }
+
+  .right img {
+    width: 80%; /* Responsive image */
+    max-width: 250px; /* Max width for larger screens */
+  }
+
+  .query-section {
+    padding: 40px 20px; /* Adjusted padding for smaller screens */
+  }
+
+  .query-input {
+    width: 90%; /* Adjust width on smaller screens */
+    max-width: 600px; /* Limit width for very small screens */
+  }
+
+  label {
+    font-size: 1rem; /* Smaller label size for smaller screens */
+  }
+
+  input[type="text"],
+  select {
+    font-size: 1rem; /* Smaller input size for smaller screens */
+  }
 }
