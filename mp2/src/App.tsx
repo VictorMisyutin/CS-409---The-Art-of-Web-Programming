@@ -22,8 +22,10 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [galleryImages, setGalleryImages] = useState<NasaResponse[]>([]);
-  const [filter, setFilter] = useState<string>(''); // New filter state
-  const [isFiltering, setIsFiltering] = useState<boolean>(false); // New filtering loading state
+  const [isGalleryLoading, setIsGalleryLoading] = useState<boolean>(true);
+  const [filter, setFilter] = useState<string>('');
+  const [isFiltering, setIsFiltering] = useState<boolean>(false);
+  const [filteredResults, setFilteredResults] = useState<NasaResponse[]>([]); // New state for filtered results
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,20 +62,31 @@ function App() {
     }
   };
 
-  const fetchGalleryImages = async () => {
-    const API_KEY = '2bJJ8abZ0OMiRMascSH5LGAbfqk3rqzGEQc1Plml';
-    const today = new Date();
-    const lastYear = new Date();
-    lastYear.setFullYear(today.getFullYear() - 1);
-    const startDate = lastYear.toISOString().split('T')[0];
-    const endDate = today.toISOString().split('T')[0];
-    const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`;
+  const clearResults = () => {
+    setResults([]);
+  };
 
+  const fetchGalleryImages = async () => {
+    setIsGalleryLoading(true);
+    const API_KEY = '2bJJ8abZ0OMiRMascSH5LGAbfqk3rqzGEQc1Plml';
+    
+    const fixedDate = new Date('2024-10-22');
+    const lastYear = new Date();
+    lastYear.setFullYear(fixedDate.getFullYear() - 1);
+    
+    const startDate = lastYear.toISOString().split('T')[0];
+    const endDate = fixedDate.toISOString().split('T')[0];
+    
+    const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`;
+    
     try {
       const response = await axios.get<NasaResponse[]>(url);
       setGalleryImages(response.data);
+      setResults(response.data)
     } catch (error) {
       console.error('Error fetching gallery images from NASA API', error);
+    } finally {
+      setIsGalleryLoading(false);
     }
   };
 
@@ -81,24 +94,25 @@ function App() {
     fetchGalleryImages();
   }, []);
 
-  // Filter results based on the selected filter
-  const filteredGalleryImages = galleryImages.filter(image => {
-    // Check if image.url exists before calling endsWith
-    if (filter && image.url) {
-      return image.title.toLowerCase().includes(filter.toLowerCase()) ||
-             image.explanation.toLowerCase().includes(filter.toLowerCase());
-    }
-    return true;
-  });
+  // Update the filtered results based on the current filter
+  useEffect(() => {
+    const updatedResults = galleryImages.filter(image => {
+      if (filter && image.url) {
+        return image.title.toLowerCase().includes(filter.toLowerCase()) ||
+               image.explanation.toLowerCase().includes(filter.toLowerCase());
+      }
+      return true;
+    });
+    setFilteredResults(updatedResults);
+  }, [filter, galleryImages]); // Depend on filter and galleryImages
 
   const handleFilterChange = (newFilter: string) => {
-    setIsFiltering(true); // Set filtering loading state to true
-    setFilter(newFilter); // Update the filter state
+    setIsFiltering(true);
+    setFilter(newFilter);
 
-    // Simulate filtering delay (you can remove this if you fetch/filter data directly)
     setTimeout(() => {
-      setIsFiltering(false); // Reset filtering loading state
-    }, 500); // Adjust the delay as needed
+      setIsFiltering(false);
+    }, 500);
   };
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -119,9 +133,9 @@ function App() {
   return (
     <Router>
       <header className="App-header">
-        <p><Link to='/' className="logo">Vic Vic Space Adventures</Link></p>
+        <p><Link to='/' className="logo" onClick={clearResults}>Vic Vic Space Adventures</Link></p>
         <div className="nav-links">
-          <p><Link to="/list">List</Link></p>
+          <p><Link to="/list" onClick={clearResults}>List</Link></p>
           <p><Link to="/gallery">Gallery</Link></p>
         </div>
       </header>
@@ -135,9 +149,10 @@ function App() {
                 <div className="left">
                   <h1>Vic Vic Space Adventures</h1>
                   <h2 className="description">
-                    An interactive website that explores the fascinating world of planets and moons. Discover detailed information
-                    on the unique features and orbits of various celestial bodies. Embark on an educational journey through space
-                    with captivating visuals and engaging content that brings the wonders of the cosmos to life.
+                    Welcome to Vic Vic Space Adventures, an interactive website full of cool images and videos made by NASA and other 
+                    space enthusiasts. Search for specific astronomical events, planets, and much more. The list view allows you
+                    to enter specific searches within a specified time range. The gallery view has pre-selected filters you can use 
+                    to explore more cool images and videos. Click on a result to gain more information about it. Enjoy and have fun! 
                   </h2>
                 </div>
                 <div className="right">
@@ -262,16 +277,28 @@ function App() {
             <div className="gallery">
               <div className="filters">
                 <button 
-                  className={filter === 'lunar eclipse' ? 'active' : ''} 
-                  onClick={() => handleFilterChange('lunar eclipse')}
+                  className={filter === 'Nebula' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('Nebula')}
                 >
-                  Lunar Eclipse
+                  Nebula
                 </button>
                 <button 
                   className={filter === 'meteor shower' ? 'active' : ''} 
                   onClick={() => handleFilterChange('meteor shower')}
                 >
                   Meteor Shower
+                </button>
+                <button 
+                  className={filter === 'Comets' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('Comets')}
+                >
+                  Comets
+                </button>
+                <button 
+                  className={filter === 'star' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('star')}
+                >
+                  Star
                 </button>
                 <button 
                   className={filter === 'mars' ? 'active' : ''} 
@@ -287,17 +314,17 @@ function App() {
                 </button>
                 <button onClick={() => handleFilterChange('')}>Clear Filters</button>
               </div>
-              {isFiltering ? (
+              {isGalleryLoading ? (
                 <div className="loading-spinner">
-                  <p>Loading filtered results...</p>
+                  <p>Loading gallery images...</p>
                 </div>
               ) : (
                 <div className="gallery-grid">
-                  {filteredGalleryImages.length > 0 ? (
-                    filteredGalleryImages.map((image, index) => (
-                      <div key={index} className='gallery-item'>
+                  {filteredResults.map((image, index) => ( // Use filteredResults here
+                    <div key={index} className='gallery-item'>
+                      <Link to={`/photo/${index}`} className="result-link">
                         <h3>{image.title}</h3>
-                        {image.url && ( // Check if image.url exists before accessing it
+                        {image.url && (
                           image.url.endsWith('.jpg') || image.url.endsWith('.png') ? (
                             <img src={image.url} alt={image.title} style={{ width: '100%', height: 'auto' }} />
                           ) : (
@@ -310,11 +337,9 @@ function App() {
                             ></iframe>
                           )
                         )}
-                      </div>
-                    ))
-                  ) : (
-                    <p>No images found for the selected filters.</p>
-                  )}
+                      </Link>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

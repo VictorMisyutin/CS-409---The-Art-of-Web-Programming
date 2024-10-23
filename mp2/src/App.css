@@ -84,7 +84,7 @@ header {
   padding: 20px 40px;
   background-color: #F5D042;
   color: #0A174E;
-  width: 800px;
+  width: 40vw;
   border-radius: 8px;
   margin-bottom: 7vh;
 }
@@ -140,7 +140,7 @@ select {
 }
 
 .query-results{
-  width: 50vw;
+  width: 48vw;
   margin: 0 auto;
 }
 
@@ -171,7 +171,7 @@ select {
   .filters{
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 10px;
     padding-bottom: 5vh;
     
     button{
@@ -189,7 +189,7 @@ select {
 }
 
 .gallery-grid{
-  width: 60vw;
+  width: 70vw;
   margin: 0 auto;
   gap: 20px;
   display: grid;
@@ -201,7 +201,7 @@ select {
     background-color: #F5D042;
     h3{
       margin: 0;
-      height: 50px;
+      min-height: 50px;
       padding: 10px 40px;
       display: flex;
       justify-content: center;
@@ -225,22 +225,27 @@ select {
 }
 
   /* Media Queries for responsive design */
+@media (max-width: 1200px) {
+  .gallery-grid{
+    grid-template-columns: 1fr 1fr;
+  }
+  .gallery .filters button{
+    font-size: 18px;
+  }
+
+}
 @media (max-width: 768px) {
   header {
     flex-direction: column; /* Stack header items vertically */
     align-items: flex-start; /* Align items to the start */
-    height: 36vh;
+    height: 10vh;
     text-align: center;
     padding: 0;
-  }
+    display: block;
+    padding-bottom: 1vh;
+  }s
   
   .logo{
-    text-align: center;
-    margin: 15px auto;
-
-  }
-  
-  .nav-links {
     margin-top: 0;
     padding-top: 0;
     flex-direction: column; /* Stack nav links vertically */
@@ -249,10 +254,24 @@ select {
     gap: 0;
   }
   
-  .nav-links p{
-    padding: 10px 0;
+  .nav-links {
+    display: flexbox;
+    flex-direction: column; /* Stack nav links vertically */
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    border-top: 2px #F5D042 solid ;
+    gap: 0;
+    margin: 0;
+    background-color: #F5D042;
+  }
+  
+  .nav-links p{
+    width: 100%;
+    margin: 0;
+    border: 1px solid #0A174E ;
+  }
+  .nav-links a{
+    color:#0A174E;
   }
 
   .hero {
@@ -294,5 +313,14 @@ select {
   input[type="text"],
   select {
     font-size: 1rem; /* Smaller input size for smaller screens */
+  }
+  .gallery-grid{
+    grid-template-columns: 1fr;
+  }
+  .gallery .filters{
+    gap: 5px;
+  }
+  .gallery .filters button{
+    font-size: 14px;
   }
 }
