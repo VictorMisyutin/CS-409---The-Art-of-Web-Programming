@@ -4,7 +4,6 @@ import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import PhotoDetail from './PhotoDetail';
 
-// Define a type for the API response
 interface NasaResponse {
   title: string;
   url: string;
@@ -30,32 +29,27 @@ function App() {
     Pluto: false,
     Earth: false,
   });
-  const [activeFilter, setActiveFilter] = useState<string | null>(null); // Track active filter
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
-  // Set the default filter to Solar Eclipse
   useEffect(() => {
-    setShowSolarEclipses(true); // Set Solar Eclipse filter to true
-    setActiveFilter('solarEclipse'); // Set active filter to Solar Eclipse
+    setShowSolarEclipses(true);
+    setActiveFilter('solarEclipse');
   }, []);
 
-  // Fetch recent photos when the component mounts
   useEffect(() => {
     const fetchRecentPhotos = async () => {
-      setIsLoading(true); // Start loading
-
+      setIsLoading(true);
       const today = new Date();
-      const endDate = today.toISOString().split('T')[0]; // Today's date
+      const endDate = today.toISOString().split('T')[0];
       const startDate = new Date();
-      startDate.setDate(today.getDate() - 200); // 100 days ago
-      const formattedStartDate = startDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+      startDate.setDate(today.getDate() - 200);
+      const formattedStartDate = startDate.toISOString().split('T')[0];
       setStartDate(formattedStartDate);
       setEndDate(endDate);
-
-      await handleSearch(); // Fetch data with the initial filter
+      await handleSearch();
     };
-
     fetchRecentPhotos();
-  }, []); // This runs once when the component mounts
+  }, []);
 
   const isSolarEclipse = (result: NasaResponse) => {
     return result.title.toLowerCase().includes("solar eclipse") || 
@@ -99,8 +93,7 @@ function App() {
   };
 
   const handleSearch = async () => {
-    setIsLoading(true);  // Start loading
-  
+    setIsLoading(true);
     const API_KEY = '2bJJ8abZ0OMiRMascSH5LGAbfqk3rqzGEQc1Plml';
     const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`;
   
@@ -124,40 +117,39 @@ function App() {
       });
   
       const filteredResults = filterResults(sortedResults);
-      
       const maxResults = maxCount !== 'none' ? parseInt(maxCount, 10) : filteredResults.length;
       setResults(filteredResults.slice(0, maxResults));
   
     } catch (error) {
       console.error('Error fetching data from NASA API', error);
     } finally {
-      setIsLoading(false);  // Stop loading
+      setIsLoading(false);
     }
   };
 
   const handleSolarEclipseFilter = () => {
     setShowSolarEclipses(prev => !prev);
-    setActiveFilter(prev => prev === 'solarEclipse' ? null : 'solarEclipse'); // Set active filter
+    setActiveFilter(prev => prev === 'solarEclipse' ? null : 'solarEclipse');
   };
 
   const handleLunarEclipseFilter = () => {
     setShowLunarEclipses(prev => !prev);
-    setActiveFilter(prev => prev === 'lunarEclipse' ? null : 'lunarEclipse'); // Set active filter
+    setActiveFilter(prev => prev === 'lunarEclipse' ? null : 'lunarEclipse');
   };
 
   const handleMeteorShowerFilter = () => {
     setShowMeteorShowers(prev => !prev);
-    setActiveFilter(prev => prev === 'meteorShower' ? null : 'meteorShower'); // Set active filter
+    setActiveFilter(prev => prev === 'meteorShower' ? null : 'meteorShower');
   };
 
   const handleHalleyCometFilter = () => {
     setShowHalleyComet(prev => !prev);
-    setActiveFilter(prev => prev === 'halleyComet' ? null : 'halleyComet'); // Set active filter
+    setActiveFilter(prev => prev === 'halleyComet' ? null : 'halleyComet');
   };
 
   const handlePlanetFilter = (planet: string) => {
     setShowPlanets(prev => ({ ...prev, [planet]: !prev[planet] }));
-    setActiveFilter(prev => prev === planet ? null : planet); // Set active filter
+    setActiveFilter(prev => prev === planet ? null : planet);
   };
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -175,7 +167,6 @@ function App() {
     return '';
   };
 
-  // useEffect for handling filter changes
   useEffect(() => {
     if (
       showSolarEclipses ||
@@ -184,7 +175,7 @@ function App() {
       showHalleyComet ||
       Object.values(showPlanets).some(planet => planet)
     ) {
-      handleSearch(); // Call handleSearch whenever a filter state changes
+      handleSearch();
     }
   }, [showSolarEclipses, showLunarEclipses, showMeteorShowers, showHalleyComet, showPlanets]);
 
@@ -199,10 +190,7 @@ function App() {
         </div>
       </header>
       <Routes>
-        {/* Redirect from "/" to "/list" */}
         <Route path="/" element={<Navigate to="/list" />} />
-
-        {/* List Route */}
         <Route
           path="/list"
           element={
@@ -322,8 +310,6 @@ function App() {
             </div>
           }
         />
-
-        {/* Gallery Route */}
         <Route
           path="/gallery"
           element={
@@ -383,8 +369,6 @@ function App() {
             </div>
           }
         />
-
-        {/* Photo Detail Route */}
         <Route path="/photo/:id" element={<PhotoDetail results={results} />} />
       </Routes>
     </Router>

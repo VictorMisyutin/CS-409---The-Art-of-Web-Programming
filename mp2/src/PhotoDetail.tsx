@@ -2,7 +2,6 @@ import './PhotoDetail.css';
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-// Define the type for the NASA response data
 interface NasaResponse {
   title: string;
   url: string;
@@ -14,7 +13,6 @@ interface PhotoDetailProps {
   results: NasaResponse[];
 }
 
-// Function to extract YouTube embed URL from the video URL
 const getYouTubeEmbedUrl = (url: string): string => {
   try {
     const urlObj = new URL(url);
@@ -34,21 +32,16 @@ const PhotoDetail: React.FC<PhotoDetailProps> = ({ results }) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Convert id to a number safely, handling undefined case
   const photoId = id ? parseInt(id, 10) : -1;
 
-  // Check if the photo exists in the results array
   const photo = results[photoId];
 
-  // If the photo is not found or the id is invalid, return a message
   if (!photo || isNaN(photoId)) {
     return <div>Photo not found</div>;
   }
 
-  // Check if the photo is a YouTube video or an image
   const embedUrl = getYouTubeEmbedUrl(photo.url);
 
-  // Navigation handlers
   const handlePrevious = () => {
     if (photoId > 0) {
       navigate(`/photo/${photoId - 1}`);
@@ -63,7 +56,6 @@ const PhotoDetail: React.FC<PhotoDetailProps> = ({ results }) => {
 
   return (
     <div className='container'>
-      {/* Previous and Next Buttons */}
       <div className='navigation-buttons'>
         <button 
           onClick={handlePrevious} 
@@ -97,7 +89,6 @@ const PhotoDetail: React.FC<PhotoDetailProps> = ({ results }) => {
 
       <p className='description'>{photo.explanation}</p>
 
-      {/* Previous and Next Buttons */}
       <div className='navigation-buttons'>
         <button 
           onClick={handlePrevious} 
