@@ -50,16 +50,42 @@ const PhotoDetail: React.FC<PhotoDetailProps> = ({ results }) => {
 
     // Navigation handlers
     const handlePrevious = () => {
-        if (photoId > 0) {
-            navigate(`/photo/${photoId - 1}`);
-        }
-    };
+      // Get the current path
+      const currentPath = window.location.pathname; // or use useLocation() from react-router
+      // Split the path and get the last part
+      const pathParts = currentPath.split('/');
+      const lastPart = pathParts[pathParts.length - 1]; // Get the last part of the URL
+  
+      // Parse the last part to an integer
+      const currentId = parseInt(lastPart, 10);
+  
+      // Check if the currentId is a valid number and greater than 0
+      if (!isNaN(currentId) && currentId < results.length - 1) {
+        // Construct the new path by using the part before the last segment
+        const newPath = `${pathParts.slice(0, pathParts.length - 1).join('/')}/${currentId - 1}`;
+        navigate(newPath);
+    }
+  };
+  
+  const handleNext = () => {
+    // Get the current path
+    const currentPath = window.location.pathname; // or use useLocation() from react-router
+    // Split the path into parts
+    const pathParts = currentPath.split('/');
+    // Get the last part (current photoId)
+    const lastPart = pathParts[pathParts.length - 1];
+    
+    // Parse the last part to an integer
+    const currentId = parseInt(lastPart, 10);
 
-    const handleNext = () => {
-        if (photoId < results.length - 1) {
-            navigate(`/photo/${photoId + 1}`);
-        }
-    };
+    // Check if the currentId is a valid number and less than the maximum index
+    if (!isNaN(currentId) && currentId < results.length - 1) {
+        // Construct the new path by using the part before the last segment
+        const newPath = `${pathParts.slice(0, pathParts.length - 1).join('/')}/${currentId + 1}`;
+        navigate(newPath);
+    }
+};
+
 
     return (
         <div className='container'>
