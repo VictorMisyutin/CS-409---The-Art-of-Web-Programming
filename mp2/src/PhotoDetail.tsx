@@ -15,7 +15,7 @@ interface PhotoDetailProps {
 }
 
 // Function to extract YouTube embed URL from the video URL
-const getYouTubeEmbedUrl = (url: string) => {
+const getYouTubeEmbedUrl = (url: string): string => {
   try {
     const urlObj = new URL(url);
     if (urlObj.hostname === 'www.youtube.com' || urlObj.hostname === 'youtube.com') {
@@ -63,7 +63,7 @@ const PhotoDetail: React.FC<PhotoDetailProps> = ({ results }) => {
 
   return (
     <div className='container'>
-              {/* Previous and Next Buttons */}
+      {/* Previous and Next Buttons */}
       <div className='navigation-buttons'>
         <button 
           onClick={handlePrevious} 

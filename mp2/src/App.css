@@ -66,13 +66,13 @@ header {
 }
 
 .right img {
-  width: 250px; /* Fixed width for larger screens */
+  width: 250px; 
 }
 
 .query-section {
   background-color: #0A174E;
   color: #F5D042;
-  padding: 80px 200px; /* Default padding for desktop */
+  padding: 80px 200px;
   justify-content: center;
 }
 
@@ -127,9 +127,11 @@ select {
   background: #1a3197;
 }
 .loading-spinner {
-  text-align: center;
-  padding: 20px;
+  position: absolute;
+  top: 20%;
+  left: 50%;
   color: white;
+  
 }
 
 .loading-spinner p {
@@ -160,25 +162,87 @@ select {
   text-decoration: none;
   color: #0A174E;
 }
-.result-link:hover {
-  text-decoration: underline;
-}
 
-.filters{
-  margin: 0 auto;
-  border: 2px red solid;
-  display: inline-flex;
-}
-.filter{
-  background-color: #F5D042;
-  color: #0A174E;
-  border: 2px black solid;
-  width: 150px;
-  text-align: center;
-  padding: 10px;
-  font-size: 18px;
-}
+.gallery {
 
+  .filters {
+    display: flex;           /* Use flexbox layout for filters */
+    justify-content: center; /* Center horizontally */
+    gap: 15px;              /* Space between the filter items */
+    margin-bottom: 20px;    /* Margin below filters */
+  }
+  
+  .filter {
+    padding: 10px 20px;      /* Padding for filter buttons */
+    border: 1px solid #F5D042;  /* Highlight border */
+    border-radius: 5px;      /* Rounded corners */
+    cursor: pointer;          /* Pointer cursor on hover */
+    background-color: #F5D042; /* Base color */
+    color: #0A174E;          /* Text color */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+  }
+  
+  .filter:hover {
+    background-color: #D4C932; /* Slightly darker on hover */
+  }
+  
+  .filter.active {
+    background-color: #9c831e; /* Color for active filter */
+  }
+  
+  .query-results {
+    display: grid;            /* Use grid layout for results */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive columns */
+    gap: 20px;               /* Space between results */
+    margin-top: 20px;        /* Margin above results */
+  }
+  
+  .result-cell {
+    background-color: #F5D042; /* Result background color */
+    padding: 10px;             /* Padding inside each result */
+    border-radius: 5px;        /* Rounded corners */
+    transition: transform 0.3s; /* Smooth scaling effect */
+    display: flex;             /* Enable flexbox for centering */
+    flex-direction: column;    /* Stack title and image vertically */
+    align-items: center;       /* Center content horizontally */
+  }
+  
+  .result-cell img {
+    max-height: 200px;        /* Set a maximum height for images */
+    width: auto;              /* Maintain aspect ratio */
+    object-fit: cover;        /* Crop images to cover the area */
+    border-radius: 5px;       /* Match rounded corners */
+  }
+  
+  .result-cell iframe {
+    max-height: 200px;        /* Set a maximum height for videos */
+    width: 100%;              /* Full width for video */
+    border-radius: 5px;       /* Match rounded corners */
+  }
+  
+  /* Optional: Add a specific height to result titles for uniformity */
+  .result-title {
+    height: 40px;             /* Fixed height for titles */
+    overflow: hidden;         /* Hide overflow text */
+    text-overflow: ellipsis;  /* Ellipsis for long titles */
+  }
+  .result-cell:hover {
+    transform: scale(1.05);   /* Scale up on hover */
+    cursor: pointer;           /* Pointer cursor on hover */
+  }
+  
+  .result-link {
+    text-decoration: none;     /* Remove underline from links */
+    color: #0A174E;           /* Link color */
+  }
+  
+  .result-title {
+    font-size: 1.2rem;         /* Title font size */
+    margin-bottom: 5px;        /* Margin below title */
+  }
+}
+  
+  
 
   /* Media Queries for responsive design */
 @media (max-width: 768px) {

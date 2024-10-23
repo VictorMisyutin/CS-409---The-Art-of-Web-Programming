@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import PhotoDetail from './PhotoDetail';
@@ -19,15 +19,91 @@ function App() {
   const [order, setOrder] = useState<string>('asc');
   const [maxCount, setMaxCount] = useState<string>('none');
   const [results, setResults] = useState<NasaResponse[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showSolarEclipses, setShowSolarEclipses] = useState<boolean>(false);
+  const [showLunarEclipses, setShowLunarEclipses] = useState<boolean>(false);
+  const [showMeteorShowers, setShowMeteorShowers] = useState<boolean>(false);
+  const [showHalleyComet, setShowHalleyComet] = useState<boolean>(false);
+  const [showPlanets, setShowPlanets] = useState<{ [key: string]: boolean }>({
+    Mars: false,
+    Jupiter: false,
+    Pluto: false,
+    Earth: false,
+  });
+  const [activeFilter, setActiveFilter] = useState<string | null>(null); // Track active filter
 
-  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // Set the default filter to Solar Eclipse
+  useEffect(() => {
+    setShowSolarEclipses(true); // Set Solar Eclipse filter to true
+    setActiveFilter('solarEclipse'); // Set active filter to Solar Eclipse
+  }, []);
+
+  // Fetch recent photos when the component mounts
+  useEffect(() => {
+    const fetchRecentPhotos = async () => {
+      setIsLoading(true); // Start loading
+
+      const today = new Date();
+      const endDate = today.toISOString().split('T')[0]; // Today's date
+      const startDate = new Date();
+      startDate.setDate(today.getDate() - 200); // 100 days ago
+      const formattedStartDate = startDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+      setStartDate(formattedStartDate);
+      setEndDate(endDate);
+
+      await handleSearch(); // Fetch data with the initial filter
+    };
+
+    fetchRecentPhotos();
+  }, []); // This runs once when the component mounts
+
+  const isSolarEclipse = (result: NasaResponse) => {
+    return result.title.toLowerCase().includes("solar eclipse") || 
+           result.explanation.toLowerCase().includes("solar eclipse");
+  };
+
+  const isLunarEclipse = (result: NasaResponse) => {
+    return result.title.toLowerCase().includes("lunar eclipse") || 
+           result.explanation.toLowerCase().includes("lunar eclipse");
+  };
+
+  const isMeteorShower = (result: NasaResponse) => {
+    return result.title.toLowerCase().includes("meteor shower") || 
+           result.explanation.toLowerCase().includes("meteor shower");
+  };
+
+  const isHalleyComet = (result: NasaResponse) => {
+    return result.title.toLowerCase().includes("halley's comet") || 
+           result.explanation.toLowerCase().includes("halley's comet");
+  };
+
+  const isPlanet = (result: NasaResponse, planet: string) => {
+    return result.title.toLowerCase().includes(planet.toLowerCase()) || 
+           result.explanation.toLowerCase().includes(planet.toLowerCase());
+  };
+
+  const filterResults = (sortedResults: NasaResponse[]) => {
+    return sortedResults.filter(result => {
+      const isEclipse = 
+        (showSolarEclipses && isSolarEclipse(result)) || 
+        (showLunarEclipses && isLunarEclipse(result)) || 
+        (showMeteorShowers && isMeteorShower(result)) || 
+        (showHalleyComet && isHalleyComet(result));
+        
+      const isPlanetSelected = Object.keys(showPlanets).some(planet => 
+        showPlanets[planet] && isPlanet(result, planet)
+      );
+
+      return isEclipse || isPlanetSelected;
+    });
+  };
+
+  const handleSearch = async () => {
     setIsLoading(true);  // Start loading
-
+  
     const API_KEY = '2bJJ8abZ0OMiRMascSH5LGAbfqk3rqzGEQc1Plml';
     const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`;
-
+  
     try {
       const response = await axios.get<NasaResponse[]>(url);
       const sortedResults = response.data.sort((a, b) => {
@@ -46,14 +122,42 @@ function App() {
         }
         return 0;
       });
-
-      const maxResults = maxCount !== 'none' ? parseInt(maxCount, 10) : sortedResults.length;
-      setResults(sortedResults.slice(0, maxResults));
+  
+      const filteredResults = filterResults(sortedResults);
+      
+      const maxResults = maxCount !== 'none' ? parseInt(maxCount, 10) : filteredResults.length;
+      setResults(filteredResults.slice(0, maxResults));
+  
     } catch (error) {
       console.error('Error fetching data from NASA API', error);
     } finally {
       setIsLoading(false);  // Stop loading
     }
+  };
+
+  const handleSolarEclipseFilter = () => {
+    setShowSolarEclipses(prev => !prev);
+    setActiveFilter(prev => prev === 'solarEclipse' ? null : 'solarEclipse'); // Set active filter
+  };
+
+  const handleLunarEclipseFilter = () => {
+    setShowLunarEclipses(prev => !prev);
+    setActiveFilter(prev => prev === 'lunarEclipse' ? null : 'lunarEclipse'); // Set active filter
+  };
+
+  const handleMeteorShowerFilter = () => {
+    setShowMeteorShowers(prev => !prev);
+    setActiveFilter(prev => prev === 'meteorShower' ? null : 'meteorShower'); // Set active filter
+  };
+
+  const handleHalleyCometFilter = () => {
+    setShowHalleyComet(prev => !prev);
+    setActiveFilter(prev => prev === 'halleyComet' ? null : 'halleyComet'); // Set active filter
+  };
+
+  const handlePlanetFilter = (planet: string) => {
+    setShowPlanets(prev => ({ ...prev, [planet]: !prev[planet] }));
+    setActiveFilter(prev => prev === planet ? null : planet); // Set active filter
   };
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -70,6 +174,19 @@ function App() {
     }
     return '';
   };
+
+  // useEffect for handling filter changes
+  useEffect(() => {
+    if (
+      showSolarEclipses ||
+      showLunarEclipses ||
+      showMeteorShowers ||
+      showHalleyComet ||
+      Object.values(showPlanets).some(planet => planet)
+    ) {
+      handleSearch(); // Call handleSearch whenever a filter state changes
+    }
+  }, [showSolarEclipses, showLunarEclipses, showMeteorShowers, showHalleyComet, showPlanets]);
 
   return (
     <Router>
@@ -100,12 +217,12 @@ function App() {
                   </h2>
                 </div>
                 <div className="right">
-                  <img src="clipart4050.png" alt="Space and plant exploration" />
+                  <img src="clipart4050.png" alt="Space and planet exploration" />
                 </div>
               </div>
               <div className="query-section">
                 <div className="query-input">
-                  <form onSubmit={handleSearch}>
+                  <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
                     <label htmlFor="start-date">Start Date:</label>
                     <input
                       type="date"
@@ -198,7 +315,6 @@ function App() {
                           )}
                         </Link>
                       </div>
-
                     ))
                   )}
                 </div>
@@ -213,8 +329,56 @@ function App() {
           element={
             <div className="gallery">
               <div className="filters">
-                <div className='filter'>Today Only</div>
-                <div className='filter'>Solar Eclipse Only</div>
+                <div className={`filter ${activeFilter === 'solarEclipse' ? 'active' : ''}`} onClick={handleSolarEclipseFilter}>
+                  Solar Eclipse Only
+                </div>
+                <div className={`filter ${activeFilter === 'lunarEclipse' ? 'active' : ''}`} onClick={handleLunarEclipseFilter}>
+                  Lunar Eclipse Only
+                </div>
+                <div className={`filter ${activeFilter === 'meteorShower' ? 'active' : ''}`} onClick={handleMeteorShowerFilter}>
+                  Meteor Shower Only
+                </div>
+                <div className={`filter ${activeFilter === 'halleyComet' ? 'active' : ''}`} onClick={handleHalleyCometFilter}>
+                  Halley’s Comet Only
+                </div>
+                <div className={`filter ${activeFilter === 'Mars' ? 'active' : ''}`} onClick={() => handlePlanetFilter('Mars')}>
+                  Mars Only
+                </div>
+                <div className={`filter ${activeFilter === 'Jupiter' ? 'active' : ''}`} onClick={() => handlePlanetFilter('Jupiter')}>
+                  Jupiter Only
+                </div>
+                <div className={`filter ${activeFilter === 'Pluto' ? 'active' : ''}`} onClick={() => handlePlanetFilter('Pluto')}>
+                  Pluto Only
+                </div>
+                <div className={`filter ${activeFilter === 'Earth' ? 'active' : ''}`} onClick={() => handlePlanetFilter('Earth')}>
+                  Earth Only
+                </div>
+              </div>
+              <div className="query-results">
+                {isLoading ? (
+                  <div className="loading-spinner">
+                    <p>Loading...</p>
+                  </div>
+                ) : (
+                  results.length > 0 && results.map((result, index) => (
+                    <div key={index} className='result-cell'>
+                      <Link to={`/photo/${index}`} className="result-link">
+                        <h3 className='result-title'>{result.title} ({result.date})</h3>
+                        {getYouTubeEmbedUrl(result.url) ? (
+                          <iframe
+                            width="100%"
+                            height="315"
+                            src={getYouTubeEmbedUrl(result.url)}
+                            title={result.title}
+                            allowFullScreen
+                          ></iframe>
+                        ) : (
+                          <img src={result.url} alt={result.title} style={{ width: '100%', height: 'auto' }} />
+                        )}
+                      </Link>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           }
