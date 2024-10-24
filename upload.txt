@@ -12,6 +12,6 @@ Note: might have to make new ssh key for my desktop
 
 ---------- Creating yml file ----------
 
-image --> node:lates
+image --> node:latest
 installation steps --> none (skip/next)
 Build Steps --> npm install; npm run build; mv dist public;
