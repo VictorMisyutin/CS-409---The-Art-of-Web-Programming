@@ -3,110 +3,121 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 interface NasaResponse {
-  title: string;
-  url: string;
-  explanation: string;
-  date: string;
+    title: string;
+    url: string;
+    explanation: string;
+    date: string;
 }
 
 interface PhotoDetailProps {
-  results: NasaResponse[];
+    results: NasaResponse[];
 }
 
-const getYouTubeEmbedUrl = (url: string): string => {
-  try {
-    const urlObj = new URL(url);
-    if (urlObj.hostname === 'www.youtube.com' || urlObj.hostname === 'youtube.com') {
-      const videoId = urlObj.searchParams.get('v') || urlObj.pathname.split('/').pop();
-      return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-    } else if (urlObj.hostname === 'youtu.be') {
-      return `https://www.youtube.com/embed/${urlObj.pathname.split('/').pop()}?autoplay=1`;
+const getYouTubeEmbedUrl = (url: string) => {
+    try {
+        const urlObj = new URL(url);
+        if (urlObj.hostname === 'www.youtube.com' || urlObj.hostname === 'youtube.com') {
+            const videoId = urlObj.searchParams.get('v') || urlObj.pathname.split('/').pop();
+            return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        } else if (urlObj.hostname === 'youtu.be') {
+            return `https://www.youtube.com/embed/${urlObj.pathname.split('/').pop()}?autoplay=1`;
+        }
+    } catch (error) {
+        console.error('Invalid URL:', url, error);
     }
-  } catch (error) {
-    console.error('Invalid URL:', url, error);
-  }
-  return '';
+    return '';
 };
 
 const PhotoDetail: React.FC<PhotoDetailProps> = ({ results }) => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
 
-  const photoId = id ? parseInt(id, 10) : -1;
+    const photoId = id ? parseInt(id, 10) : -1;
+    const photo = results[photoId];
 
-  const photo = results[photoId];
-
-  if (!photo || isNaN(photoId)) {
-    return <div>Photo not found</div>;
-  }
-
-  const embedUrl = getYouTubeEmbedUrl(photo.url);
-
-  const handlePrevious = () => {
-    if (photoId > 0) {
-      navigate(`/photo/${photoId - 1}`);
+    if (!photo || isNaN(photoId)) {
+        return <div>Photo not found</div>;
     }
-  };
 
-  const handleNext = () => {
-    if (photoId < results.length - 1) {
-      navigate(`/photo/${photoId + 1}`);
-    }
-  };
+    const embedUrl = getYouTubeEmbedUrl(photo.url);
 
-  return (
-    <div className='container'>
-      <div className='navigation-buttons'>
-        <button 
-          onClick={handlePrevious} 
-          disabled={photoId === 0} 
-          className='prev-button'
-        >
-          Previous
-        </button>
-        <button 
-          onClick={handleNext} 
-          disabled={photoId === results.length - 1} 
-          className='next-button'
-        >
-          Next
-        </button>
-      </div>
-      <h1 className='title'>{photo.title}</h1>
-      <p className='date'>Date: {photo.date}</p>
+    const handlePrevious = () => {
+        const currentPath = window.location.pathname;
+        const pathParts = currentPath.split('/');
+        const lastPart = pathParts[pathParts.length - 1];
+        const currentId = parseInt(lastPart, 10);
 
-      {embedUrl ? (
-        <iframe
-          width="100%"
-          height="315"
-          src={embedUrl}
-          title={photo.title}
-          allowFullScreen
-        ></iframe>
-      ) : (
-        <img src={photo.url} alt={photo.title} />
-      )}
+        if (!isNaN(currentId) && currentId < results.length - 1) {
+            const newPath = `${pathParts.slice(0, pathParts.length - 1).join('/')}/${currentId - 1}`;
+            navigate(newPath);
+        }
+    };
+  
+    const handleNext = () => {
+        const currentPath = window.location.pathname;
+        const pathParts = currentPath.split('/');
+        const lastPart = pathParts[pathParts.length - 1];
+        const currentId = parseInt(lastPart, 10);
 
-      <p className='description'>{photo.explanation}</p>
+        if (!isNaN(currentId) && currentId < results.length - 1) {
+            const newPath = `${pathParts.slice(0, pathParts.length - 1).join('/')}/${currentId + 1}`;
+            navigate(newPath);
+        }
+    };
 
-      <div className='navigation-buttons'>
-        <button 
-          onClick={handlePrevious} 
-          disabled={photoId === 0} 
-          className='prev-button'
-        >
-          Previous
-        </button>
-        <button 
-          onClick={handleNext} 
-          disabled={photoId === results.length - 1} 
-          className='next-button'
-        >
-          Next
-        </button>
-      </div>
-    </div>
-  );
+    return (
+        <div className='container'>
+            <div className='navigation-buttons'>
+                <button
+                    onClick={handlePrevious}
+                    disabled={photoId === 0}
+                    className='prev-button'
+                >
+                    Previous
+                </button>
+                <button
+                    onClick={handleNext}
+                    disabled={photoId === results.length - 1}
+                    className='next-button'
+                >
+                    Next
+                </button>
+            </div>
+            <h1 className='title'>{photo.title}</h1>
+            <p className='date'>Date: {photo.date}</p>
+
+            {embedUrl ? (
+                <iframe
+                    width="100%"
+                    height="315"
+                    src={embedUrl}
+                    title={photo.title}
+                    allowFullScreen
+                ></iframe>
+            ) : (
+                <img src={photo.url} alt={photo.title} />
+            )}
+
+            <p className='description'>{photo.explanation}</p>
+
+            <div className='navigation-buttons'>
+                <button
+                    onClick={handlePrevious}
+                    disabled={photoId === 0}
+                    className='prev-button'
+                >
+                    Previous
+                </button>
+                <button
+                    onClick={handleNext}
+                    disabled={photoId === results.length - 1}
+                    className='next-button'
+                >
+                    Next
+                </button>
+            </div>
+        </div>
+    );
 };
 
 export default PhotoDetail;

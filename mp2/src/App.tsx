@@ -19,72 +19,19 @@ function App() {
   const [maxCount, setMaxCount] = useState<string>('none');
   const [results, setResults] = useState<NasaResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showSolarEclipses, setShowSolarEclipses] = useState<boolean>(false);
-  const [showLunarEclipses, setShowLunarEclipses] = useState<boolean>(false);
-  const [showMeteorShowers, setShowMeteorShowers] = useState<boolean>(false);
-  const [showPlanets, setShowPlanets] = useState<{ [key: string]: boolean }>({
-    Mars: false,
-    Jupiter: false,
-    Pluto: false,
-    Earth: false,
-  });
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [galleryImages, setGalleryImages] = useState<NasaResponse[]>([]);
+  const [isGalleryLoading, setIsGalleryLoading] = useState<boolean>(true);
+  const [filter, setFilter] = useState<string>('');
+  const [filteredResults, setFilteredResults] = useState<NasaResponse[]>([]);
 
-  useEffect(() => {
-    const fetchRecentPhotos = async () => {
-      setIsLoading(true);
-      const today = new Date();
-      const endDate = today.toISOString().split('T')[0];
-      const startDate = new Date();
-      startDate.setDate(today.getDate() - 200);
-      const formattedStartDate = startDate.toISOString().split('T')[0];
-      setStartDate(formattedStartDate);
-      setEndDate(endDate);
-      await handleSearch();
-    };
-    fetchRecentPhotos();
-  }, []);
-
-  const isSolarEclipse = (result: NasaResponse) => {
-    return result.title.toLowerCase().includes("solar eclipse") || 
-           result.explanation.toLowerCase().includes("solar eclipse");
-  };
-
-  const isLunarEclipse = (result: NasaResponse) => {
-    return result.title.toLowerCase().includes("lunar eclipse") || 
-           result.explanation.toLowerCase().includes("lunar eclipse");
-  };
-
-  const isMeteorShower = (result: NasaResponse) => {
-    return result.title.toLowerCase().includes("meteor shower") || 
-           result.explanation.toLowerCase().includes("meteor shower");
-  };
-
-  const isPlanet = (result: NasaResponse, planet: string) => {
-    return result.title.toLowerCase().includes(planet.toLowerCase()) || 
-           result.explanation.toLowerCase().includes(planet.toLowerCase());
-  };
-
-  const filterResults = (sortedResults: NasaResponse[]) => {
-    return sortedResults.filter(result => {
-      const isEclipse = 
-        (showSolarEclipses && isSolarEclipse(result)) || 
-        (showLunarEclipses && isLunarEclipse(result)) || 
-        (showMeteorShowers && isMeteorShower(result));
-        
-      const isPlanetSelected = Object.keys(showPlanets).some(planet => 
-        showPlanets[planet] && isPlanet(result, planet)
-      );
-
-      return isEclipse || isPlanetSelected;
-    });
-  };
-
-  const handleSearch = async () => {
+  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsLoading(true);
+  
     const API_KEY = '2bJJ8abZ0OMiRMascSH5LGAbfqk3rqzGEQc1Plml';
     const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`;
-
+  
     try {
       const response = await axios.get<NasaResponse[]>(url);
       const sortedResults = response.data.sort((a, b) => {
@@ -103,79 +50,93 @@ function App() {
         }
         return 0;
       });
-
-      const filteredResults = filterResults(sortedResults); // Apply filters after sorting
+  
+      const filteredResults = sortedResults.filter(result => 
+        result.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        result.explanation.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+  
       const maxResults = maxCount !== 'none' ? parseInt(maxCount, 10) : filteredResults.length;
       setResults(filteredResults.slice(0, maxResults));
-
     } catch (error) {
       console.error('Error fetching data from NASA API', error);
     } finally {
       setIsLoading(false);
     }
   };
-
-  const handleSolarEclipseFilter = () => {
-    setShowSolarEclipses(prev => {
-      const newValue = !prev;
-      setActiveFilter(newValue ? 'solarEclipse' : null);
-      return newValue;
-    });
+  
+  const clearResults = () => {
+    setResults([]);
   };
 
-  const handleLunarEclipseFilter = () => {
-    setShowLunarEclipses(prev => {
-      const newValue = !prev;
-      setActiveFilter(newValue ? 'lunarEclipse' : null);
-      return newValue;
-    });
-  };
-
-  const handleMeteorShowerFilter = () => {
-    setShowMeteorShowers(prev => {
-      const newValue = !prev;
-      setActiveFilter(newValue ? 'meteorShower' : null);
-      return newValue;
-    });
-  };
-
-  const handlePlanetFilter = (planet: string) => {
-    setShowPlanets(prev => {
-      const newValue = !prev[planet];
-      setActiveFilter(newValue ? planet : null);
-      return { ...prev, [planet]: newValue };
-    });
-  };
-
-  const getYouTubeEmbedUrl = (url: string) => {
+  const fetchGalleryImages = async () => {
+    setIsGalleryLoading(true);
+    const API_KEY = '2bJJ8abZ0OMiRMascSH5LGAbfqk3rqzGEQc1Plml';
+    
+    const fixedDate = new Date('2024-10-22');
+    const lastYear = new Date();
+    lastYear.setFullYear(fixedDate.getFullYear() - 1);
+    
+    const startDate = lastYear.toISOString().split('T')[0];
+    const endDate = fixedDate.toISOString().split('T')[0];
+    
+    const url = `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&start_date=${startDate}&end_date=${endDate}`;
+    
     try {
-      const urlObj = new URL(url);
-      if (urlObj.hostname === 'www.youtube.com' || urlObj.hostname === 'youtube.com') {
-        const videoId = urlObj.searchParams.get('v') || urlObj.pathname.split('/').pop();
-        return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-      } else if (urlObj.hostname === 'youtu.be') {
-        return `https://www.youtube.com/embed/${urlObj.pathname.split('/').pop()}?autoplay=1`;
-      }
+      const response = await axios.get<NasaResponse[]>(url);
+      setGalleryImages(response.data);
     } catch (error) {
-      console.error('Invalid URL:', url, error);
+      console.error('Error fetching gallery images from NASA API', error);
+    } finally {
+      setIsGalleryLoading(false);
     }
-    return '';
   };
 
-  // Call handleSearch whenever filter states change
   useEffect(() => {
-    handleSearch();
-  }, [showSolarEclipses, showLunarEclipses, showMeteorShowers, showPlanets, startDate, endDate, maxCount]);
+    fetchGalleryImages();
+  }, []);
+
+  useEffect(() => {
+    const updatedResults = galleryImages.filter(image => {
+      if (filter && image.url) {
+        return image.title.toLowerCase().includes(filter.toLowerCase()) ||
+               image.explanation.toLowerCase().includes(filter.toLowerCase());
+      }
+      return true;
+    });
+    setFilteredResults(updatedResults);
+  }, [filter, galleryImages]);
+
+  const handleFilterChange = (newFilter: string) => {
+    setFilter(newFilter);
+
+    setTimeout(() => {
+    }, 500);
+  };
+
+const getYouTubeEmbedUrl = (url: string) => {
+  try {
+    const urlObj = new URL(url);
+    if (urlObj.hostname === 'www.youtube.com' || urlObj.hostname === 'youtube.com') {
+      const videoId = urlObj.searchParams.get('v') || urlObj.pathname.split('/').pop();
+      return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
+    } else if (urlObj.hostname === 'youtu.be') {
+      return `https://www.youtube.com/embed/${urlObj.pathname.split('/').pop()}?autoplay=1&mute=1`;
+    }
+  } catch (error) {
+    console.error('Invalid URL:', url, error);
+  }
+  return '';
+};
+
 
   return (
     <Router>
       <header className="App-header">
-        <p><Link to='/' className="logo">Vic Vic Space Adventures</Link></p>
+        <p><Link to='/' className="logo" onClick={clearResults}>Vic Vic Space Adventures</Link></p>
         <div className="nav-links">
-          <p><Link to="/list">List</Link></p>
-          <p>
-            <Link to="/gallery">Gallery</Link>
-          </p>
+          <p><Link to="/list" onClick={clearResults}>List</Link></p>
+          <p><Link to="/gallery">Gallery</Link></p>
         </div>
       </header>
       <Routes>
@@ -188,9 +149,10 @@ function App() {
                 <div className="left">
                   <h1>Vic Vic Space Adventures</h1>
                   <h2 className="description">
-                    An interactive website that explores the fascinating world of planets and moons. Discover detailed information
-                    on the unique features and orbits of various celestial bodies. Embark on an educational journey through space
-                    with captivating visuals and engaging content that brings the wonders of the cosmos to life.
+                    Welcome to Vic Vic Space Adventures, an interactive website full of cool images and videos made by NASA and other 
+                    space enthusiasts. Search for specific astronomical events, planets, and much more. The list view allows you
+                    to enter specific searches within a specified time range. The gallery view has pre-selected filters you can use 
+                    to explore more cool images and videos. Click on a result to gain more information about it. Enjoy and have fun! 
                   </h2>
                 </div>
                 <div className="right">
@@ -199,7 +161,16 @@ function App() {
               </div>
               <div className="query-section">
                 <div className="query-input">
-                  <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
+                  <form onSubmit={handleSearch}>
+                    <label htmlFor="search-string"> Search:</label>
+                    <input
+                      type="text"
+                      id="search-string"
+                      name="search-string"
+                      placeholder="Search by title or description"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                     <label htmlFor="start-date">Start Date:</label>
                     <input
                       type="date"
@@ -275,9 +246,15 @@ function App() {
                       <p>Loading...</p>
                     </div>
                   ) : (
-                    results.length > 0 && results.map((result, index) => (
+                    results.filter(result => 
+                      result.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                      result.explanation.toLowerCase().includes(searchQuery.toLowerCase())
+                    ).length > 0 && results.filter(result => 
+                      result.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                      result.explanation.toLowerCase().includes(searchQuery.toLowerCase())
+                    ).map((result, index) => (
                       <div key={index} className='result-cell'>
-                        <Link to={`/photo/${index}`} className="result-link">
+                        <Link to={`/list-photo/${index}`} className="result-link">
                           <h3 className='result-title'>{result.title} ({result.date})</h3>
                           {getYouTubeEmbedUrl(result.url) ? (
                             <iframe
@@ -304,58 +281,77 @@ function App() {
           element={
             <div className="gallery">
               <div className="filters">
-                <div className={`filter ${activeFilter === 'solarEclipse' ? 'active' : ''}`} onClick={handleSolarEclipseFilter}>
-                  Solar Eclipse Only
-                </div>
-                <div className={`filter ${activeFilter === 'lunarEclipse' ? 'active' : ''}`} onClick={handleLunarEclipseFilter}>
-                  Lunar Eclipse Only
-                </div>
-                <div className={`filter ${activeFilter === 'meteorShower' ? 'active' : ''}`} onClick={handleMeteorShowerFilter}>
-                  Meteor Shower Only
-                </div>
-                <div className={`filter ${activeFilter === 'Mars' ? 'active' : ''}`} onClick={() => handlePlanetFilter('Mars')}>
-                  Mars Only
-                </div>
-                <div className={`filter ${activeFilter === 'Jupiter' ? 'active' : ''}`} onClick={() => handlePlanetFilter('Jupiter')}>
-                  Jupiter Only
-                </div>
-                <div className={`filter ${activeFilter === 'Pluto' ? 'active' : ''}`} onClick={() => handlePlanetFilter('Pluto')}>
-                  Pluto Only
-                </div>
-                <div className={`filter ${activeFilter === 'Earth' ? 'active' : ''}`} onClick={() => handlePlanetFilter('Earth')}>
-                  Earth Only
-                </div>
+                <button 
+                  className={filter === 'Nebula' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('Nebula')}
+                >
+                  Nebula
+                </button>
+                <button 
+                  className={filter === 'meteor shower' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('meteor shower')}
+                >
+                  Meteor Shower
+                </button>
+                <button 
+                  className={filter === 'Comets' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('Comets')}
+                >
+                  Comets
+                </button>
+                <button 
+                  className={filter === 'star' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('star')}
+                >
+                  Star
+                </button>
+                <button 
+                  className={filter === 'mars' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('mars')}
+                >
+                  Mars
+                </button>
+                <button 
+                  className={filter === 'jupiter' ? 'active' : ''} 
+                  onClick={() => handleFilterChange('jupiter')}
+                >
+                  Jupiter
+                </button>
+                <button onClick={() => handleFilterChange('')}>Clear Filters</button>
               </div>
-              <div className="query-results">
-                {isLoading ? (
-                  <div className="loading-spinner">
-                    <p>Loading...</p>
-                  </div>
-                ) : (
-                  results.length > 0 && results.map((result, index) => (
-                    <div key={index} className='result-cell'>
-                      <Link to={`/photo/${index}`} className="result-link">
-                        <h3 className='result-title'>{result.title} ({result.date})</h3>
-                        {getYouTubeEmbedUrl(result.url) ? (
-                          <iframe
-                            width="100%"
-                            height="315"
-                            src={getYouTubeEmbedUrl(result.url)}
-                            title={result.title}
-                            allowFullScreen
-                          ></iframe>
-                        ) : (
-                          <img src={result.url} alt={result.title} style={{ width: '100%', height: 'auto' }} />
+              {isGalleryLoading ? (
+                <div className="loading-spinner">
+                  <p>Loading gallery images...</p>
+                </div>
+              ) : (
+                <div className="gallery-grid">
+                  {filteredResults.map((image, index) => (
+                    <div key={index} className='gallery-item'>
+                      <Link to={`/gallery-photo/${index}`} className="result-link">
+                        <h3>{image.title}</h3>
+                        {image.url && (
+                          image.url.endsWith('.jpg') || image.url.endsWith('.png') ? (
+                            <img src={image.url} alt={image.title} style={{ width: '100%', height: 'auto' }} />
+                          ) : (
+                            <iframe
+                              width="100%"
+                              height="315"
+                              src={getYouTubeEmbedUrl(image.url)}
+                              title={image.title}
+                              allowFullScreen
+                            ></iframe>
+                          )
                         )}
                       </Link>
                     </div>
-                  ))
-                )}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           }
         />
-        <Route path="/photo/:id" element={<PhotoDetail results={results} />} />
+        <Route path="/list-photo/:id" element={<PhotoDetail results={results} />} />
+        <Route path="/gallery-photo/:id" element={<PhotoDetail results={galleryImages} />} />
       </Routes>
     </Router>
   );
