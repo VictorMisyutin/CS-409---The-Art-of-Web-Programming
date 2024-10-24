@@ -18,13 +18,11 @@ function App() {
   const [order, setOrder] = useState<string>('asc');
   const [maxCount, setMaxCount] = useState<string>('none');
   const [results, setResults] = useState<NasaResponse[]>([]);
-  const [PhotoDetailResults, setPhotoDetailResults] = useState<NasaResponse[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [galleryImages, setGalleryImages] = useState<NasaResponse[]>([]);
   const [isGalleryLoading, setIsGalleryLoading] = useState<boolean>(true);
   const [filter, setFilter] = useState<string>('');
-  const [isFiltering, setIsFiltering] = useState<boolean>(false);
   const [filteredResults, setFilteredResults] = useState<NasaResponse[]>([]);
 
   const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -60,7 +58,6 @@ function App() {
   
       const maxResults = maxCount !== 'none' ? parseInt(maxCount, 10) : filteredResults.length;
       setResults(filteredResults.slice(0, maxResults));
-      setPhotoDetailResults(filteredResults.slice(0, maxResults));
     } catch (error) {
       console.error('Error fetching data from NASA API', error);
     } finally {
@@ -88,7 +85,6 @@ function App() {
     try {
       const response = await axios.get<NasaResponse[]>(url);
       setGalleryImages(response.data);
-      setPhotoDetailResults(response.data);
     } catch (error) {
       console.error('Error fetching gallery images from NASA API', error);
     } finally {
@@ -112,11 +108,9 @@ function App() {
   }, [filter, galleryImages]);
 
   const handleFilterChange = (newFilter: string) => {
-    setIsFiltering(true);
     setFilter(newFilter);
 
     setTimeout(() => {
-      setIsFiltering(false);
     }, 500);
   };
 
