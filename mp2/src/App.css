@@ -151,6 +151,9 @@ select {
   font-size: 22px;
   margin-bottom: 5vh;
   text-align: center;
+  img,iframe{
+    width: 100%;
+  }
 }
 
 .result-cell:hover{
@@ -214,7 +217,7 @@ select {
       padding: 0;
       min-height:  400px;
       max-height:  400px;
-      object-fit: fit;
+      width: 100%;
       background-color: gray;
     }
   }
