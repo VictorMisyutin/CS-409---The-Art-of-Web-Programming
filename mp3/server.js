@@ -12,7 +12,7 @@ var app = express();
 var port = process.env.PORT || 4000;
 
 // Connect to a MongoDB --> Uncomment this once you have a connection string!!
-//mongoose.connect(secrets.mongo_connection,  { useNewUrlParser: true });
+mongoose.connect(secrets.mongo_connection,  { useNewUrlParser: true });
 
 // Allow CORS so that backend and frontend could be put on different servers
 var allowCrossDomain = function (req, res, next) {
@@ -29,8 +29,9 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-// Use routes as a module (see index.js)
-require('./routes')(app, router);
+
+const routes = require('./routes');
+app.use('/api', routes);
 
 // Start the server
 app.listen(port);
