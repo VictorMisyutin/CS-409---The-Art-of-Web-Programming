@@ -3,7 +3,6 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const taskController = require('../controllers/taskController');
 
-// Users Routes
 router.route('/users')
     .get(userController.getUsers)
     .post(userController.createUser);
@@ -13,7 +12,6 @@ router.route('/users/:id')
     .put(userController.updateUser)
     .delete(userController.deleteUser);
 
-// Tasks Routes
 router.route('/tasks')
     .get(taskController.getTasks)
     .post(taskController.createTask);
